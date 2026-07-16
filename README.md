@@ -1,22 +1,44 @@
 # Kababyan
 
-Kababyan is a web-first cultural tourism prototype built around a simple idea: travel should help people feel welcomed into local life, not merely move them between attractions.
+Kababyan is a web-first cultural tourism prototype that helps international visitors participate respectfully in Filipino community life instead of merely collecting attractions.
 
-## The MVP
+## Website structure
 
-- One community-authored city journey (Batangas City)
-- Six small missions across food, language, people, heritage, local livelihood, and reflection
-- Optional place/photo verification only where location adds meaning
-- A welcome badge that celebrates participation without claiming a visitor has “become” a local
-- Local browser persistence; no account or backend required for the prototype
+### Public layer
 
-## Product guardrails
+- Marketing landing page
+- How It Works page
+- Login and signup placeholders
+- Guest entry without credentials
 
-- Locals and cultural workers should author and review every journey.
-- Challenges should invite listening and participation, not imitation or stereotype.
-- A photo can confirm a place, but reflection confirms the experience.
-- No bookings, hotels, generic reviews, itinerary planning, or social feed in the MVP.
-- Consent is required before publicly sharing a person’s image or story.
+### Application layer
+
+- **Discover:** browse communities and complete community experiences
+- **Journey:** take optional place-based side quests
+- **Passport:** manage the guest identity, community badges, place stamps, photos, and reflections
+
+Batangas City is the only functional MVP community.
+
+## Completion model
+
+### Community badge
+
+Complete any five of six Batangas community experiences and submit a typed reflection to earn the **Certified Batangueño** cultural journey badge.
+
+### Place stamps
+
+Complete an optional place quest and add a private location photograph. A written observation is available when photography is prohibited or inaccessible.
+
+The badge is a playful record of participation. It is not an official credential, proof of residency, or literal certification of identity.
+
+## Privacy and persistence
+
+- Progress and text are stored in `localStorage`.
+- Private photo blobs are stored in IndexedDB.
+- No content is uploaded.
+- No account, backend, GPS, or AI verification is used.
+
+See [PRODUCT_SPEC.md](./PRODUCT_SPEC.md) and [SCOPE_BOUNDARIES.md](./SCOPE_BOUNDARIES.md).
 
 ## Run locally
 
@@ -25,12 +47,9 @@ npm install
 npm run dev
 ```
 
-Build for deployment:
+Verify:
 
 ```bash
+npm run lint
 npm run build
 ```
-
-## Next validation step
-
-Test the six Batangas missions with 5–8 Batangueño residents (including a cultural worker, a small business owner, and younger residents) before treating the copy as final. Ask whether each task feels authentic, respectful, safe, and economically useful to locals.
