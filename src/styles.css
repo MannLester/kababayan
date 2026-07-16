@@ -129,12 +129,16 @@ em { color: var(--gold); font-weight: 400; }
 .community-header { padding: 78px 0 48px; background: var(--green); color: white; }
 .community-header h1 { max-width: 800px; font-family: 'DM Serif Display'; font-size: clamp(48px, 5.6vw, 72px); font-weight: 400; line-height: 1; letter-spacing: -.03em; margin-bottom: 18px; }
 .community-header > div > p:not(.kicker) { max-width: 670px; color: rgba(255,255,255,.67); line-height: 1.65; }
-.city-tabs { display: flex; gap: 10px; margin-top: 43px; overflow-x: auto; padding-bottom: 4px; }
-.city-tabs button { min-width: 180px; padding: 16px 18px; text-align: left; display: flex; flex-direction: column; gap: 3px; border: 1px solid rgba(255,255,255,.2); border-radius: 4px 4px 15px 4px; background: rgba(255,255,255,.06); color: white; }
-.city-tabs button.active { background: var(--gold); color: var(--green); border-color: var(--gold); }
-.city-tabs button span { font-family: 'DM Serif Display'; font-size: 19px; }
-.city-tabs button small { color: inherit; opacity: .64; font-size: 8px; text-transform: uppercase; letter-spacing: .12em; }
 .community-overview { padding: 85px 0 100px; }
+.community-switcher { margin-bottom: 70px; padding: 22px 24px; display: flex; align-items: center; justify-content: space-between; gap: 30px; border: 1px solid var(--line); border-radius: 6px 6px 22px 6px; background: var(--paper); box-shadow: 0 12px 35px rgba(23,63,53,.07); }
+.community-switcher > div:first-child { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.community-switcher > div:first-child strong { overflow: hidden; color: var(--green); font-family: 'DM Serif Display'; font-size: 25px; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+.community-switcher > div:first-child small { color: var(--muted); font-size: 9px; }
+.community-select { width: min(330px, 45%); flex: 0 0 auto; }
+.community-select > span { display: block; margin-bottom: 7px; color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.community-select > div { position: relative; }
+.community-select select { width: 100%; height: 48px; padding: 0 45px 0 15px; appearance: none; border: 1px solid #bdc9c3; border-radius: 4px 4px 13px 4px; background: #f5f3eb; color: var(--green); font: 700 11px 'DM Sans', sans-serif; cursor: pointer; }
+.community-select svg { position: absolute; top: 50%; right: 14px; color: var(--green); pointer-events: none; transform: translateY(-50%); }
 .community-intro { display: grid; grid-template-columns: 1fr 260px; gap: 80px; align-items: center; margin-bottom: 50px; }
 .community-intro h2 { font-family: 'DM Serif Display'; color: var(--green); font-size: 52px; font-weight: 400; line-height: 1.03; }
 .community-intro > div:first-child > p:last-child { max-width: 650px; color: var(--muted); line-height: 1.7; }
@@ -143,6 +147,10 @@ em { color: var(--gold); font-weight: 400; }
 .community-progress-card > strong { display: block; margin: 13px 0 15px; font-family: 'DM Serif Display'; color: var(--green); font-size: 52px; line-height: .8; }
 .community-progress-card > strong small { font-size: 18px; color: #7c8b85; }
 .community-progress-card p { margin: 10px 0 0; color: var(--muted); font-size: 9px; }
+.community-coming-soon { min-height: 360px; padding: 55px; display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 45px; border: 1px solid var(--line); border-radius: 7px 7px 35px 7px; background: #e8e3d7; }
+.coming-soon-mark { width: 120px; height: 120px; display: grid; place-items: center; border-radius: 50%; background: var(--green); color: var(--gold); font-family: 'DM Serif Display'; font-size: 42px; }
+.community-coming-soon h2 { max-width: 680px; margin: 7px 0 12px; color: var(--green); font-family: 'DM Serif Display'; font-size: 42px; font-weight: 400; line-height: 1.08; }
+.community-coming-soon > div > p:last-child { max-width: 670px; color: var(--muted); line-height: 1.7; }
 .community-reflection { margin-bottom: 100px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; padding: 60px; background: #e8e3d7; border-radius: 7px 7px 45px 7px; }
 .reflection-intro h2 { font-family: 'DM Serif Display'; color: var(--green); font-size: 42px; font-weight: 400; line-height: 1.05; }
 .reflection-intro > p:not(.kicker) { color: var(--muted); line-height: 1.65; }
@@ -500,11 +508,15 @@ footer { background: #12352d; color: white; }
   .journey-section { padding: 60px 0 75px; }
   .community-header { padding: 60px 0 35px; }
   .community-header h1 { font-size: 47px; }
-  .city-tabs button { min-width: 155px; }
   .community-overview { padding: 65px 0; }
+  .community-switcher { margin-bottom: 50px; padding: 19px; align-items: stretch; flex-direction: column; gap: 18px; }
+  .community-select { width: 100%; }
   .community-intro { grid-template-columns: 1fr; gap: 25px; }
   .community-intro h2 { font-size: 42px; }
   .community-progress-card { width: 100%; }
+  .community-coming-soon { min-height: 0; padding: 35px 24px; grid-template-columns: 1fr; gap: 24px; }
+  .coming-soon-mark { width: 82px; height: 82px; font-size: 30px; }
+  .community-coming-soon h2 { font-size: 35px; }
   .community-reflection { grid-template-columns: 1fr; gap: 28px; padding: 35px 24px; margin-bottom: 70px; }
   .reflection-intro h2 { font-size: 36px; }
   .earned-community { grid-template-columns: auto 1fr; }

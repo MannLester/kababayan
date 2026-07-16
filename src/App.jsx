@@ -6,6 +6,7 @@ import {
   Camera,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Clock3,
   Compass,
@@ -258,10 +259,18 @@ function AuthPlaceholder({ mode, navigate }) {
 }
 
 function DiscoverPage({ progress, setProgress, navigate, showToast }) {
+  const activeCommunityId = communities.some((community) => community.id === progress.activeCommunity)
+    ? progress.activeCommunity
+    : 'batangas'
+  const activeCommunity = communities.find((community) => community.id === activeCommunityId)
   const communityProgress = progress.communities.batangas
   const badgeEarned = communityProgress.completed.length >= journey.completionRequired && Boolean(communityProgress.reflection.trim())
   const [reflection, setReflection] = useState(communityProgress.reflection)
   const [reflectionError, setReflectionError] = useState('')
+
+  function selectCommunity(event) {
+    setProgress((current) => ({ ...current, activeCommunity: event.target.value }))
+  }
 
   function saveReflection() {
     if (!reflection.trim()) {
@@ -289,38 +298,66 @@ function DiscoverPage({ progress, setProgress, navigate, showToast }) {
           <p className="kicker">Discover communities</p>
           <h1>Choose where you want to <em>belong for a while.</em></h1>
           <p>Each community journey is a set of invitations into everyday local life—not a list of attractions.</p>
-          <div className="city-tabs">
-            {communities.map((community) => (
-              <button key={community.id} className={community.id === 'batangas' ? 'active' : ''} disabled={community.status === 'coming-soon'}>
-                <span>{community.city}</span><small>{community.status === 'coming-soon' ? 'Coming later' : 'Now welcoming'}</small>
-              </button>
-            ))}
-            <button disabled><span>More communities</span><small>Only after validation</small></button>
-          </div>
         </div>
       </section>
 
       <section className="community-overview page-width">
-        <div className="community-intro">
-          <div><span className="location-pill dark-pill"><MapPin size={14} /> Batangas City, Philippines</span><p className="kicker dark">Community journey</p><h2>Experience Batangas<br /><em>as a kababayan.</em></h2><p>Move through food, language, livelihood, history, and personal stories. Complete any five, then describe when you felt least like a tourist.</p></div>
-          <div className="community-progress-card"><span className="eyebrow">Community progress</span><strong>{communityProgress.completed.length}<small> / 6</small></strong><div className="progress-track"><span style={{ width: `${communityProgress.completed.length / 6 * 100}%` }} /></div><p>{badgeEarned ? 'Certified Batangueño earned' : `${Math.max(0, journey.completionRequired - communityProgress.completed.length)} more before your reflection`}</p></div>
+        <div className="community-switcher">
+          <div>
+            <span className="eyebrow">Your current community</span>
+            <strong>{activeCommunity.city}</strong>
+            <small>{activeCommunity.status === 'coming-soon' ? 'Journey in development' : 'Community journey available'}</small>
+          </div>
+          <label className="community-select">
+            <span>Change city</span>
+            <div>
+              <select value={activeCommunityId} onChange={selectCommunity} aria-label="Choose a community">
+                {communities.map((community) => (
+                  <option key={community.id} value={community.id}>
+                    {community.city}{community.status === 'coming-soon' ? ' — Coming soon' : ''}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={18} aria-hidden="true" />
+            </div>
+          </label>
         </div>
 
-        <div className="mission-grid">
-          {journey.experiences.map((experience, index) => (
-            <ExperienceCard key={experience.id} experience={experience} index={index} done={communityProgress.completed.includes(experience.id)} navigate={navigate} />
-          ))}
-        </div>
+        {activeCommunityId === 'batangas' ? (
+          <>
+            <div className="community-intro">
+              <div><span className="location-pill dark-pill"><MapPin size={14} /> Batangas City, Philippines</span><p className="kicker dark">Community journey</p><h2>Experience Batangas<br /><em>as a kababayan.</em></h2><p>Move through food, language, livelihood, history, and personal stories. Complete any five, then describe when you felt least like a tourist.</p></div>
+              <div className="community-progress-card"><span className="eyebrow">Community progress</span><strong>{communityProgress.completed.length}<small> / 6</small></strong><div className="progress-track"><span style={{ width: `${communityProgress.completed.length / 6 * 100}%` }} /></div><p>{badgeEarned ? 'Certified Batangueño earned' : `${Math.max(0, journey.completionRequired - communityProgress.completed.length)} more before your reflection`}</p></div>
+            </div>
+
+            <div className="mission-grid">
+              {journey.experiences.map((experience, index) => (
+                <ExperienceCard key={experience.id} experience={experience} index={index} done={communityProgress.completed.includes(experience.id)} navigate={navigate} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="community-coming-soon">
+            <span className="coming-soon-mark">CE</span>
+            <div>
+              <p className="kicker dark">Journey in development</p>
+              <h2>{activeCommunity.city} is not ready to welcome travelers yet.</h2>
+              <p>Its experiences will only be published after the community journey has been researched and validated. Choose Batangas City to explore the current prototype.</p>
+            </div>
+          </div>
+        )}
       </section>
 
-      <section className="community-reflection page-width">
-        <div className="reflection-intro"><p className="kicker dark">Final community requirement</p><h2>When did you feel least like a tourist?</h2><p>What happened in that moment, and what do you understand differently about Batangas now?</p><div className="badge-definition"><BadgeCheck size={20} /><span><strong>Certified Batangueño</strong>A cultural participation badge—not an official credential or claim of residency.</span></div></div>
-        <div className="reflection-form">
-          <textarea rows="8" value={reflection} disabled={communityProgress.completed.length < journey.completionRequired} onChange={(event) => { setReflection(event.target.value); setReflectionError('') }} placeholder={communityProgress.completed.length >= journey.completionRequired ? 'Write your honest reflection. It stays on this device.' : 'Complete five community experiences to unlock this reflection.'} />
-          {reflectionError && <p className="form-error">{reflectionError}</p>}
-          {badgeEarned ? <div className="earned-community"><Sparkles size={18} /><span><strong>{journey.welcome}</strong>Your community badge is now in your Passport.</span><button onClick={() => navigate('/app/passport')}>Open Passport <ArrowRight size={15} /></button></div> : <button className="primary-button" disabled={communityProgress.completed.length < journey.completionRequired} onClick={saveReflection}><Sparkles size={18} /> Complete Batangas journey</button>}
-        </div>
-      </section>
+      {activeCommunityId === 'batangas' && (
+        <section className="community-reflection page-width">
+          <div className="reflection-intro"><p className="kicker dark">Final community requirement</p><h2>When did you feel least like a tourist?</h2><p>What happened in that moment, and what do you understand differently about Batangas now?</p><div className="badge-definition"><BadgeCheck size={20} /><span><strong>Certified Batangueño</strong>A cultural participation badge—not an official credential or claim of residency.</span></div></div>
+          <div className="reflection-form">
+            <textarea rows="8" value={reflection} disabled={communityProgress.completed.length < journey.completionRequired} onChange={(event) => { setReflection(event.target.value); setReflectionError('') }} placeholder={communityProgress.completed.length >= journey.completionRequired ? 'Write your honest reflection. It stays on this device.' : 'Complete five community experiences to unlock this reflection.'} />
+            {reflectionError && <p className="form-error">{reflectionError}</p>}
+            {badgeEarned ? <div className="earned-community"><Sparkles size={18} /><span><strong>{journey.welcome}</strong>Your community badge is now in your Passport.</span><button onClick={() => navigate('/app/passport')}>Open Passport <ArrowRight size={15} /></button></div> : <button className="primary-button" disabled={communityProgress.completed.length < journey.completionRequired} onClick={saveReflection}><Sparkles size={18} /> Complete Batangas journey</button>}
+          </div>
+        </section>
+      )}
     </main>
   )
 }
