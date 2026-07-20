@@ -1,6 +1,6 @@
-# Kababyan
+# Kababayan
 
-Kababyan is a web-first cultural tourism prototype that helps international visitors participate respectfully in Filipino community life instead of merely collecting attractions.
+Kababayan is a web-first cultural tourism prototype that helps international visitors participate respectfully in Filipino community life instead of merely collecting attractions.
 
 ## Website structure
 

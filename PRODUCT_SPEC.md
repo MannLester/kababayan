@@ -1,8 +1,8 @@
-# Kababyan MVP Product Specification
+# Kababayan MVP Product Specification
 
 ## Promise
 
-Kababyan helps international visitors participate respectfully in Filipino community life through food, language, people, livelihood, heritage, and reflection.
+Kababayan helps international visitors participate respectfully in Filipino community life through food, language, people, livelihood, heritage, and reflection.
 
 The website has two layers:
 

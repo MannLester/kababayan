@@ -6,7 +6,6 @@ import {
   Camera,
   Check,
   CheckCircle2,
-  ChevronDown,
   ChevronRight,
   Clock3,
   Compass,
@@ -21,6 +20,7 @@ import {
   Menu,
   PhilippinePeso,
   RotateCcw,
+  Search,
   ShieldCheck,
   Sparkles,
   Stamp,
@@ -152,10 +152,29 @@ function App() {
   )
 }
 
-function Brand({ navigate }) {
+function KababayanMark({ className = '' }) {
   return (
-    <button className="brand" onClick={() => navigate('/')} aria-label="Kababyan home">
-      <span className="brand-mark"><span />K</span><span>Kababyan</span>
+    <svg className={className} viewBox="0 0 64 64" role="img" aria-label="Kababayan open bahay mark">
+      <path className="mark-shelter" d="M8 28 32 8l24 20" />
+      <path className="mark-home" d="M14 25v29h36V25" />
+      <path className="mark-k" d="M25 29v23m0-10 12-12m-12 12 13 10" />
+      <circle className="mark-person mark-person-one" cx="37.5" cy="31" r="3.5" />
+      <path className="mark-person mark-person-one" d="M32.5 45c.7-5.8 2.4-8.7 5-8.7s4.3 2.9 5 8.7" />
+      <circle className="mark-person mark-person-two" cx="46" cy="35" r="2.7" />
+      <path className="mark-person mark-person-two" d="M42.2 46c.5-4.5 1.8-6.7 3.8-6.7s3.3 2.2 3.8 6.7" />
+      <path className="mark-threshold" d="M19 54h26" />
+    </svg>
+  )
+}
+
+function Brand({ navigate, showDescriptor = false }) {
+  return (
+    <button className="brand" onClick={() => navigate('/')} aria-label="Kababayan home">
+      <span className="brand-mark"><KababayanMark /></span>
+      <span className="brand-copy">
+        <strong>Kababayan</strong>
+        {showDescriptor && <small>Philippines, from within</small>}
+      </span>
     </button>
   )
 }
@@ -163,7 +182,7 @@ function Brand({ navigate }) {
 function PublicHeader({ navigate }) {
   return (
     <header className="topbar public-header">
-      <Brand navigate={navigate} />
+      <Brand navigate={navigate} showDescriptor />
       <nav className="public-links">
         <button onClick={() => navigate('/how-it-works')}>How it works</button>
         <button onClick={() => navigate('/login')}>Log in</button>
@@ -213,15 +232,16 @@ function LandingPage({ navigate }) {
         <div className="discover-photo" />
         <div className="discover-scrim" />
         <div className="discover-content page-width">
+          <div className="hero-brand-stamp"><KababayanMark /><span><strong>Kababayan</strong>Philippine community journeys</span></div>
           <p className="kicker">Experience the Philippines from within</p>
-          <h1>Arrive as a visitor.<br /><em>Leave with belonging.</em></h1>
-          <p>Kababyan turns food, language, stories, and everyday encounters into respectful invitations to participate in Filipino community life.</p>
+          <h1>Come as a visitor.<br /><em>Leave as a kababayan.</em></h1>
+          <p>Kababayan turns food, language, stories, and everyday encounters into respectful invitations to participate in Filipino community life.</p>
           <div className="hero-actions">
             <button className="primary-button fit gold-button" onClick={() => navigate('/signup')}>Start your journey <ArrowRight size={18} /></button>
             <button className="ghost-button light" onClick={() => navigate('/how-it-works')}>See how it works</button>
           </div>
         </div>
-        <div className="hero-note"><span>Ka</span><p><strong>From kababayan</strong>Someone welcomed as a person from home—not treated as a passing tourist.</p></div>
+        <div className="hero-note"><KababayanMark /><p><strong>From kababayan</strong>Someone welcomed as a person from home—not treated as a passing tourist.</p></div>
       </section>
 
       <section className="intro-section page-width">
@@ -267,9 +287,14 @@ function DiscoverPage({ progress, setProgress, navigate, showToast }) {
   const badgeEarned = communityProgress.completed.length >= journey.completionRequired && Boolean(communityProgress.reflection.trim())
   const [reflection, setReflection] = useState(communityProgress.reflection)
   const [reflectionError, setReflectionError] = useState('')
+  const [communitySearch, setCommunitySearch] = useState('')
+  const filteredCommunities = communities.filter((community) => {
+    const query = communitySearch.trim().toLowerCase()
+    return !query || `${community.city} ${community.country}`.toLowerCase().includes(query)
+  })
 
-  function selectCommunity(event) {
-    setProgress((current) => ({ ...current, activeCommunity: event.target.value }))
+  function selectCommunity(communityId) {
+    setProgress((current) => ({ ...current, activeCommunity: communityId }))
   }
 
   function saveReflection() {
@@ -302,25 +327,43 @@ function DiscoverPage({ progress, setProgress, navigate, showToast }) {
       </section>
 
       <section className="community-overview page-width">
-        <div className="community-switcher">
-          <div>
-            <span className="eyebrow">Your current community</span>
-            <strong>{activeCommunity.city}</strong>
-            <small>{activeCommunity.status === 'coming-soon' ? 'Journey in development' : 'Community journey available'}</small>
-          </div>
-          <label className="community-select">
-            <span>Change city</span>
+        <div className="community-browser">
+          <div className="community-browser-heading">
             <div>
-              <select value={activeCommunityId} onChange={selectCommunity} aria-label="Choose a community">
-                {communities.map((community) => (
-                  <option key={community.id} value={community.id}>
-                    {community.city}{community.status === 'coming-soon' ? ' — Coming soon' : ''}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown size={18} aria-hidden="true" />
+              <span className="eyebrow">Explore by city</span>
+              <h2>Find your next community.</h2>
             </div>
-          </label>
+            <span className="community-count">{communities.length} {communities.length === 1 ? 'community' : 'communities'}</span>
+          </div>
+
+          <div className="community-search" role="search">
+            <Search size={20} aria-hidden="true" />
+            <input
+              type="search"
+              value={communitySearch}
+              onChange={(event) => setCommunitySearch(event.target.value)}
+              placeholder="Search a city or province"
+              aria-label="Search communities"
+            />
+            {communitySearch && <button type="button" onClick={() => setCommunitySearch('')} aria-label="Clear community search"><X size={16} /></button>}
+          </div>
+
+          <div className="community-city-list" aria-live="polite">
+            {filteredCommunities.map((community) => (
+              <CommunityCityCard
+                key={community.id}
+                community={community}
+                active={community.id === activeCommunityId}
+                onSelect={() => selectCommunity(community.id)}
+              />
+            ))}
+            {!filteredCommunities.length && (
+              <div className="community-search-empty">
+                <Search size={24} />
+                <div><strong>No communities found</strong><span>Try another city or province name.</span></div>
+              </div>
+            )}
+          </div>
         </div>
 
         {activeCommunityId === 'batangas' ? (
@@ -359,6 +402,60 @@ function DiscoverPage({ progress, setProgress, navigate, showToast }) {
         </section>
       )}
     </main>
+  )
+}
+
+function CommunityCityCard({ community, active, onSelect }) {
+  const available = community.status !== 'coming-soon'
+
+  return (
+    <div className="community-city-entry">
+      <button
+        type="button"
+        className={`community-city-card ${community.id}-city-card${active ? ' active' : ''}`}
+        onClick={onSelect}
+        aria-pressed={active}
+      >
+        {community.id === 'batangas' ? (
+          <>
+            <img className="batangas-card-photo" src="/images/subli-batangas.jpg" alt="" aria-hidden="true" />
+            <span className="batangas-card-scrim" aria-hidden="true" />
+            <span className="festival-pennants" aria-hidden="true"><i /><i /><i /><i /></span>
+            <span className="batangas-card-content">
+              <span className="batangas-card-topline">
+                <small>Community journey · Philippines</small>
+                <span className={`city-card-status${available ? ' available' : ''}`}>
+                  {active ? <><Check size={15} /> Selected</> : <>Explore <ArrowRight size={15} /></>}
+                </span>
+              </span>
+              <strong className="batangas-card-title">Batangas <em>City</em></strong>
+              <span className="batangas-card-footer">
+                <span className="batangas-card-theme"><small>Industrial Port City</small><b>of CALABARZON</b></span>
+                <span className="batangas-card-location"><MapPin size={14} /> Batangas, Philippines</span>
+              </span>
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="city-card-art" aria-hidden="true">
+              <span className="city-monogram">{community.city.slice(0, 2).toUpperCase()}</span>
+            </span>
+            <span className="city-card-copy">
+              <small>Future community journey</small>
+              <strong>{community.city}</strong>
+              <span><MapPin size={13} /> {community.country}</span>
+            </span>
+            <span className="city-card-status">{active ? <><Check size={15} /> Selected</> : 'Coming soon'}</span>
+          </>
+        )}
+      </button>
+      {community.id === 'batangas' && (
+        <span className="city-photo-credit">
+          Photo: <a href="https://commons.wikimedia.org/wiki/File:Subli.jpg" target="_blank" rel="noreferrer">Audioboss</a>
+          {' / '}<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a> · cropped for display
+        </span>
+      )}
+    </div>
   )
 }
 
@@ -568,7 +665,7 @@ function PassportPage({ progress, setProgress, navigate, showToast }) {
   }
 
   async function reset() {
-    if (!window.confirm('Reset all Kababyan progress and private photos on this device?')) return
+    if (!window.confirm('Reset all Kababayan progress and private photos on this device?')) return
     await clearPlacePhotos(placeQuests.map((quest) => quest.id))
     setProgress(emptyProgress())
     showToast('Local Passport reset.')
@@ -647,10 +744,10 @@ function BadgeVisual({ label, earned }) {
 function HowItWorksPage({ navigate }) {
   return (
     <main className="about-page">
-      <section className="about-hero page-width"><p className="kicker dark">How Kababyan works</p><h1>Community first.<br />Places with purpose.<br /><em>Memories kept private.</em></h1><p>Kababyan separates belonging from sightseeing so neither becomes a generic travel checklist.</p></section>
+      <section className="about-hero page-width"><p className="kicker dark">How Kababayan works</p><h1>Community first.<br />Places with purpose.<br /><em>Memories kept private.</em></h1><p>Kababayan separates belonging from sightseeing so neither becomes a generic travel checklist.</p></section>
       <section className="principles page-width"><article><span>01</span><Users /><h2>Discover communities</h2><p>Participate in food, language, livelihood, heritage, and personal stories. Reflect to earn a community badge.</p></article><article><span>02</span><Compass /><h2>Take place quests</h2><p>Visit optional locations with meaningful activities, then keep a private photo or observation.</p></article><article><span>03</span><WalletCards /><h2>Build a Passport</h2><p>Community badges remain the main achievement. Smaller place stamps preserve individual memories.</p></article></section>
       <section className="scope-panel page-width"><div><p className="kicker">Deliberately focused</p><h2>What you won’t find here.</h2></div><div className="scope-list">{['Reservations or deals', 'Ratings and reviews', 'Maps or directions', 'Public photo feeds', 'Points or leaderboards', 'A test of identity'].map((item) => <span key={item}><X size={15} /> {item}</span>)}</div></section>
-      <section className="trust-detail page-width"><div className="name-mark">Ka<br />ba<br />byan</div><div><p className="kicker dark">The promise</p><h2>Participate without <em>pretending.</em></h2><p>“Being one of the community” means listening, joining respectfully, and understanding more deeply. It never means copying stereotypes or claiming an identity someone has not lived.</p><button className="primary-button fit" onClick={() => navigate('/signup')}>Enter as a guest <ArrowRight size={17} /></button></div></section>
+      <section className="trust-detail page-width"><div className="promise-mark"><KababayanMark /><span>Come as a visitor.<br /><strong>Leave as a kababayan.</strong></span></div><div><p className="kicker dark">The promise</p><h2>Participate without <em>pretending.</em></h2><p>“Being one of the community” means listening, joining respectfully, and understanding more deeply. It never means copying stereotypes or claiming an identity someone has not lived.</p><button className="primary-button fit" onClick={() => navigate('/signup')}>Enter as a guest <ArrowRight size={17} /></button></div></section>
     </main>
   )
 }
@@ -660,7 +757,7 @@ function NotFound({ navigate }) {
 }
 
 function Footer({ navigate, publicPage }) {
-  return <footer><div className="footer-inner page-width"><Brand navigate={navigate} /><p>Travel closer. Listen longer. Leave as kababayan.</p><button onClick={() => navigate(publicPage ? '/how-it-works' : '/app/passport')}>{publicPage ? 'How it works' : 'Your Passport'}</button></div></footer>
+  return <footer><div className="footer-inner page-width"><Brand navigate={navigate} /><p>Come as a visitor. Leave as a kababayan.</p><button onClick={() => navigate(publicPage ? '/how-it-works' : '/app/passport')}>{publicPage ? 'How it works' : 'Your Passport'}</button></div></footer>
 }
 
 export default App

@@ -1,4 +1,4 @@
-# Kababyan MVP Scope Boundaries
+# Kababayan MVP Scope Boundaries
 
 ## Included
 

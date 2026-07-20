@@ -181,7 +181,7 @@ export const placeQuests = [
     duration: '45–75 minutes',
     color: 'terracotta',
     summary: 'Notice how pilgrimage, quiet reflection, and the surrounding landscape meet in one place.',
-    context: 'Monte Maria is a religious destination in Barangay Pagkilatan. Kababyan treats it as a living place of faith rather than a backdrop to collect.',
+    context: 'Monte Maria is a religious destination in Barangay Pagkilatan. Kababayan treats it as a living place of faith rather than a backdrop to collect.',
     activities: [
       'Observe respectfully how visitors use the space: prayer, gathering, reflection, or sightseeing.',
       'Learn one reason the site or Sto. Niño devotion matters to Filipino Catholic visitors.',
