@@ -20,7 +20,8 @@ The website has two layers:
 
 ### Application
 
-- `/app/discover` — communities and community experiences
+- `/app/discover` — searchable community selection
+- `/app/discover/:communityId` — selected community journey and experiences
 - `/app/discover/:communityId/experiences/:experienceId` — experience detail
 - `/app/journey` — optional place quests
 - `/app/journey/:placeId` — place-quest detail and completion

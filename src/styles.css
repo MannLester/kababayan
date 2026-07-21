@@ -143,7 +143,41 @@ em { color: var(--gold); font-weight: 400; }
 .community-header { padding: 78px 0 48px; background: var(--green); color: white; }
 .community-header h1 { max-width: 800px; font-family: 'DM Serif Display'; font-size: clamp(48px, 5.6vw, 72px); font-weight: 400; line-height: 1; letter-spacing: -.03em; margin-bottom: 18px; }
 .community-header > div > p:not(.kicker) { max-width: 670px; color: rgba(255,255,255,.67); line-height: 1.65; }
+.community-back-link { margin-bottom: 34px; padding: 0; display: flex; align-items: center; gap: 7px; border: 0; background: transparent; color: rgba(255,255,255,.72); font-size: 10px; font-weight: 700; }
+.community-back-link:hover { color: white; }
 .community-overview { padding: 85px 0 100px; }
+.community-overview.community-task-overview { padding-bottom: 82px; }
+
+.batangas-journey-page { --festival-red: #a94033; --festival-gold: #e7a62f; --festival-cream: #f8e7ba; background: #fbf5e8; }
+.batangas-journey-page .community-journey-header { min-height: 560px; padding: 76px 0 62px; display: flex; align-items: center; position: relative; isolation: isolate; overflow: hidden; background: var(--green); }
+.batangas-journey-page .community-journey-header::before { content: ''; position: absolute; z-index: -2; inset: 0; background: repeating-linear-gradient(45deg, transparent 0 26px, rgba(248,231,186,.055) 26px 28px), repeating-linear-gradient(-45deg, transparent 0 26px, rgba(248,231,186,.04) 26px 28px), radial-gradient(circle at 88% 50%, rgba(231,166,47,.18) 0 15%, transparent 15.2%), var(--green); }
+.batangas-journey-page .community-journey-header::after { content: ''; position: absolute; z-index: -1; inset: auto 0 0; height: 20px; background: repeating-linear-gradient(90deg, var(--festival-gold) 0 38px, var(--festival-red) 38px 76px, var(--festival-cream) 76px 114px); }
+.sublian-hero-layout { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 86px; align-items: center; }
+.sublian-hero-copy { min-width: 0; }
+.batangas-journey-page .community-journey-header h1 { max-width: 690px; font-size: clamp(58px, 6vw, 82px); line-height: .88; }
+.batangas-journey-page .community-journey-header h1 em { color: var(--festival-gold); }
+.batangas-journey-page .community-journey-header .sublian-hero-copy > p:not(.kicker) { max-width: 620px; color: rgba(255,255,255,.76); }
+.journey-festival-pennants { width: 100%; height: 43px; position: absolute; z-index: 3; top: 0; left: 0; display: flex; justify-content: space-evenly; border-top: 2px solid rgba(255,255,255,.5); }
+.journey-festival-pennants i { width: clamp(34px, 5vw, 68px); height: 41px; display: block; background: var(--festival-gold); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.journey-festival-pennants i:nth-child(3n + 2) { height: 32px; background: var(--festival-cream); }
+.journey-festival-pennants i:nth-child(3n) { height: 47px; background: var(--festival-red); }
+.sublian-festival-seal { aspect-ratio: 1; padding: 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border: 2px solid var(--festival-gold); border-radius: 50%; color: var(--festival-cream); text-align: center; box-shadow: 0 0 0 12px rgba(231,166,47,.08), 0 0 0 28px rgba(248,231,186,.035); }
+.sublian-festival-seal::before, .sublian-festival-seal::after { content: ''; position: absolute; inset: 16px; border: 1px dashed rgba(248,231,186,.48); border-radius: 50%; }
+.sublian-festival-seal::after { inset: -17px 40%; border: 0; border-left: 2px solid var(--festival-red); border-right: 2px solid var(--festival-red); border-radius: 0; transform: rotate(45deg); }
+.sublian-festival-seal > * { position: relative; z-index: 1; }
+.sublian-festival-seal > span { color: var(--festival-gold); font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.sublian-festival-seal > strong { margin-top: 6px; font-family: 'DM Serif Display'; font-size: 58px; font-weight: 400; line-height: .86; }
+.sublian-festival-seal > em { color: white; font-family: 'DM Serif Display'; font-size: 19px; }
+.sublian-festival-seal > small { margin-top: 13px; font-size: 7px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.festival-mask-mark { width: 72px; height: 42px; margin: 17px 0 4px; position: relative; overflow: hidden; border: 2px solid var(--festival-gold); border-radius: 50% 50% 45% 45%; background: var(--festival-red); }
+.festival-mask-mark::before, .festival-mask-mark::after { content: ''; width: 16px; height: 8px; position: absolute; top: 13px; border-radius: 50%; background: var(--green); transform: rotate(12deg); }
+.festival-mask-mark::before { left: 11px; }
+.festival-mask-mark::after { right: 11px; transform: rotate(-12deg); }
+.festival-mask-mark i:first-child { width: 18px; height: 9px; position: absolute; left: 25px; bottom: 5px; border-bottom: 2px solid var(--festival-cream); border-radius: 50%; }
+.sublian-theme-band { margin-bottom: 54px; padding: 16px 20px; display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 16px; border: 1px solid #d7bd82; border-radius: 0 0 18px 18px; background: var(--festival-cream); color: var(--green); box-shadow: inset 0 5px 0 var(--festival-red); }
+.sublian-theme-band span { color: var(--festival-red); font-family: 'DM Serif Display'; font-size: 20px; }
+.sublian-theme-band strong { font-size: 8px; letter-spacing: .13em; text-transform: uppercase; }
+.sublian-theme-band i { height: 8px; background: repeating-linear-gradient(90deg, var(--festival-gold) 0 22px, var(--festival-red) 22px 44px, var(--green) 44px 66px); clip-path: polygon(0 30%, 100% 30%, 100% 70%, 0 70%); }
 .community-browser { margin-bottom: 75px; }
 .community-browser-heading { margin-bottom: 22px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 .community-browser-heading h2 { margin: 0; color: var(--green); font-family: 'DM Serif Display'; font-size: 36px; font-weight: 400; line-height: 1; }
@@ -160,7 +194,7 @@ em { color: var(--gold); font-weight: 400; }
 .community-city-card:hover { transform: translateY(-2px); border-color: #aaa98f; box-shadow: 0 18px 40px rgba(23,63,53,.1); }
 .community-city-card.active { border-color: var(--green); box-shadow: 0 0 0 2px var(--green), 0 18px 42px rgba(23,63,53,.12); }
 .community-city-card.batangas-city-card { height: 258px; display: block; position: relative; isolation: isolate; border: 0; background: #173f35; color: white; }
-.batangas-card-photo { width: 100%; height: 100%; position: absolute; inset: 0; z-index: -3; object-fit: cover; object-position: center 51%; transform: scale(1.015); transition: transform .5s ease; }
+.batangas-card-photo { width: 100%; height: 100%; position: absolute; inset: 0; z-index: -3; object-fit: cover; object-position: center 22%; transform: scale(1.015); transition: transform .5s ease; }
 .batangas-city-card:hover .batangas-card-photo { transform: scale(1.035); }
 .batangas-card-scrim { position: absolute; inset: 0; z-index: -2; background: linear-gradient(90deg, rgba(13,48,39,.97) 0%, rgba(13,48,39,.82) 34%, rgba(13,48,39,.28) 70%), linear-gradient(0deg, rgba(9,36,30,.82) 0%, transparent 58%), linear-gradient(180deg, rgba(10,33,28,.44), transparent 38%); }
 .batangas-card-content { height: 100%; padding: 25px 30px 24px; display: flex; flex-direction: column; position: relative; z-index: 2; }
@@ -203,11 +237,26 @@ em { color: var(--gold); font-weight: 400; }
 .community-progress-card > strong { display: block; margin: 13px 0 15px; font-family: 'DM Serif Display'; color: var(--green); font-size: 52px; line-height: .8; }
 .community-progress-card > strong small { font-size: 18px; color: #7c8b85; }
 .community-progress-card p { margin: 10px 0 0; color: var(--muted); font-size: 9px; }
+.batangas-journey-page .community-progress-card { padding: 30px 26px 26px 96px; position: relative; overflow: hidden; border: 1px solid rgba(248,231,186,.18); background: var(--green); color: white; box-shadow: 0 14px 32px rgba(16,54,44,.16); }
+.batangas-journey-page .community-progress-card::before, .batangas-journey-page .community-progress-card::after { content: ''; position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: #fbf5e8; transform: translateY(-50%); }
+.batangas-journey-page .community-progress-card::before { left: -11px; }
+.batangas-journey-page .community-progress-card::after { right: -11px; }
+.festival-pass-stamp { width: 59px; height: 59px; padding: 8px; display: grid; place-items: center; position: absolute; top: 29px; left: 23px; border: 2px dashed var(--festival-gold); border-radius: 50%; color: var(--festival-gold); font-family: 'DM Serif Display'; font-size: 10px; line-height: .9; text-align: center; text-transform: uppercase; transform: rotate(-7deg); }
+.batangas-journey-page .community-progress-card .eyebrow { color: #f2d68e; }
+.batangas-journey-page .community-progress-card > strong { color: white; }
+.batangas-journey-page .community-progress-card > strong small { color: rgba(255,255,255,.55); }
+.batangas-journey-page .community-progress-card .progress-track { background: rgba(255,255,255,.18); }
+.batangas-journey-page .community-progress-card .progress-track span { background: #e8b33d; }
+.batangas-journey-page .community-progress-card p { color: rgba(255,255,255,.68); }
 .community-coming-soon { min-height: 360px; padding: 55px; display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 45px; border: 1px solid var(--line); border-radius: 7px 7px 35px 7px; background: #e8e3d7; }
 .coming-soon-mark { width: 120px; height: 120px; display: grid; place-items: center; border-radius: 50%; background: var(--green); color: var(--gold); font-family: 'DM Serif Display'; font-size: 42px; }
 .community-coming-soon h2 { max-width: 680px; margin: 7px 0 12px; color: var(--green); font-family: 'DM Serif Display'; font-size: 42px; font-weight: 400; line-height: 1.08; }
 .community-coming-soon > div > p:last-child { max-width: 670px; color: var(--muted); line-height: 1.7; }
 .community-reflection { margin-bottom: 100px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; padding: 60px; background: #e8e3d7; border-radius: 7px 7px 45px 7px; }
+.batangas-journey-page .community-reflection { position: relative; overflow: hidden; border: 1px solid #d7bd82; background: linear-gradient(120deg, rgba(248,231,186,.96), rgba(239,229,205,.98)), repeating-linear-gradient(45deg, transparent 0 20px, rgba(169,64,51,.12) 20px 22px); box-shadow: 0 18px 45px rgba(59,48,26,.07); }
+.batangas-journey-page .community-reflection::before { content: 'CLOSING CIRCLE'; position: absolute; inset: 0 0 auto; height: 26px; padding-right: 28px; display: flex; align-items: center; justify-content: flex-end; background: repeating-linear-gradient(90deg, var(--festival-red) 0 42px, var(--festival-gold) 42px 84px, var(--green) 84px 126px); color: white; font-size: 7px; font-weight: 800; letter-spacing: .18em; }
+.batangas-journey-page .community-reflection::after { content: ''; width: 170px; height: 170px; position: absolute; right: -65px; bottom: -78px; border: 2px dashed rgba(169,64,51,.3); border-radius: 50%; box-shadow: 0 0 0 14px rgba(231,166,47,.09), 0 0 0 30px rgba(23,63,53,.05); }
+.batangas-journey-page .community-reflection > * { position: relative; z-index: 1; }
 .reflection-intro h2 { font-family: 'DM Serif Display'; color: var(--green); font-size: 42px; font-weight: 400; line-height: 1.05; }
 .reflection-intro > p:not(.kicker) { color: var(--muted); line-height: 1.65; }
 .badge-definition { margin-top: 25px; display: flex; gap: 12px; padding: 14px; border-left: 3px solid var(--gold); background: rgba(255,255,255,.48); color: #a36b15; }
@@ -346,6 +395,19 @@ em { color: var(--gold); font-weight: 400; }
 .mission-type { color: #9a6a16; text-transform: uppercase; letter-spacing: .16em; font-size: 9px; font-weight: 700; margin-bottom: 8px; }
 .mission-card h3 { font-family: 'DM Serif Display'; font-weight: 400; font-size: 24px; line-height: 1.1; color: var(--green); margin-bottom: 11px; }
 .mission-card > p { font-size: 13px; line-height: 1.6; color: #718079; }
+.batangas-journey-page .mission-grid { grid-template-columns: repeat(2, 1fr); gap: 24px 34px; position: relative; }
+.batangas-journey-page .mission-grid::before { content: ''; width: 3px; position: absolute; top: 26px; bottom: 26px; left: 50%; background: repeating-linear-gradient(0deg, var(--festival-red) 0 15px, transparent 15px 26px); opacity: .35; transform: translateX(-50%); }
+.batangas-journey-page .mission-card { min-height: 300px; padding: 34px 29px 26px; overflow: hidden; border-color: #dfcda6; border-radius: 3px 3px 28px 3px; background: #fffaf0; box-shadow: 0 10px 28px rgba(55,43,23,.045); }
+.batangas-journey-page .mission-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 10px; background: repeating-linear-gradient(90deg, var(--festival-gold) 0 30px, var(--festival-red) 30px 60px, var(--green) 60px 90px); }
+.batangas-journey-page .mission-card::after { content: ''; width: 38px; height: 38px; position: absolute; top: -19px; right: 74px; border-radius: 50%; background: #fbf5e8; box-shadow: 0 0 0 1px #dfcda6; }
+.batangas-journey-page .mission-card.done { background: #edf2e8; border-color: #afc6b5; }
+.batangas-journey-page .mission-topline { align-items: center; }
+.batangas-journey-page .mission-number { width: 49px; height: 49px; display: grid; place-items: center; border: 1px dashed var(--festival-red); border-radius: 50%; color: var(--festival-red); font-size: 22px; transform: rotate(5deg); }
+.batangas-journey-page .mission-type { color: var(--festival-red); }
+.mission-banderitas { position: absolute; top: 10px; left: 24px; display: flex; gap: 4px; }
+.mission-banderitas i { width: 8px; height: 8px; background: var(--festival-gold); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.mission-banderitas i:nth-child(2), .mission-banderitas i:nth-child(5) { background: var(--festival-red); }
+.mission-banderitas i:nth-child(3) { background: var(--green); }
 .place-tag { display: flex; align-items: center; gap: 5px; color: #52776c; font-size: 10px; margin-bottom: 12px; }
 .mission-footer { margin-top: auto; padding-top: 17px; border-top: 1px solid #e8e6dd; display: flex; justify-content: space-between; align-items: center; }
 .mission-footer > span { color: #8b7770; font-size: 10px; }
@@ -575,6 +637,16 @@ footer { background: #12352d; color: white; }
   .journey-section { padding: 60px 0 75px; }
   .community-header { padding: 60px 0 35px; }
   .community-header h1 { font-size: 47px; }
+  .batangas-journey-page .community-journey-header { min-height: 0; padding: 86px 0 58px; }
+  .batangas-journey-page .community-journey-header h1 { font-size: 50px; line-height: .92; }
+  .sublian-hero-layout { grid-template-columns: 1fr; gap: 42px; }
+  .sublian-festival-seal { width: 245px; padding: 32px; justify-self: center; }
+  .sublian-festival-seal > strong { font-size: 46px; }
+  .journey-festival-pennants { gap: 7px; }
+  .journey-festival-pennants i { width: 32px; height: 34px; }
+  .sublian-theme-band { max-width: 100%; margin-bottom: 35px; grid-template-columns: auto minmax(0, 1fr); gap: 5px 12px; overflow: hidden; }
+  .sublian-theme-band strong { min-width: 0; text-align: right; font-size: 7px; letter-spacing: .05em; line-height: 1.35; }
+  .sublian-theme-band i { grid-column: 1 / 3; }
   .community-overview { padding: 65px 0; }
   .community-browser { margin-bottom: 50px; }
   .community-browser-heading h2 { font-size: 31px; }
@@ -595,15 +667,19 @@ footer { background: #12352d; color: white; }
   .community-intro { grid-template-columns: 1fr; gap: 25px; }
   .community-intro h2 { font-size: 42px; }
   .community-progress-card { width: 100%; }
+  .batangas-journey-page .community-progress-card { padding-left: 94px; }
   .community-coming-soon { min-height: 0; padding: 35px 24px; grid-template-columns: 1fr; gap: 24px; }
   .coming-soon-mark { width: 82px; height: 82px; font-size: 30px; }
   .community-coming-soon h2 { font-size: 35px; }
   .community-reflection { grid-template-columns: 1fr; gap: 28px; padding: 35px 24px; margin-bottom: 70px; }
+  .batangas-journey-page .community-reflection { padding-top: 58px; }
   .reflection-intro h2 { font-size: 36px; }
   .earned-community { grid-template-columns: auto 1fr; }
   .earned-community button { grid-column: 2; }
   .journey-tabs { margin-bottom: 45px; }
   .mission-card { min-height: 300px; }
+  .batangas-journey-page .mission-grid { grid-template-columns: 1fr; gap: 18px; }
+  .batangas-journey-page .mission-grid::before { display: none; }
   .badge-section { grid-template-columns: 1fr; margin-bottom: 70px; }
   .badge-copy { padding: 42px 27px; }
   .badge-copy h2 { font-size: 39px; }

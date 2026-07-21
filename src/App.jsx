@@ -121,6 +121,7 @@ function App() {
   let page
 
   const experienceMatch = path.match(/^\/app\/discover\/([^/]+)\/experiences\/([^/]+)$/)
+  const communityMatch = path.match(/^\/app\/discover\/([^/]+)$/)
   const questMatch = path.match(/^\/app\/journey\/([^/]+)$/)
 
   if (path === '/login' || path === '/signup') {
@@ -128,7 +129,14 @@ function App() {
   } else if (path === '/how-it-works') {
     page = <HowItWorksPage navigate={go} />
   } else if (experienceMatch) {
-    page = <ExperiencePage experience={experienceById[experienceMatch[2]]} progress={progress} setProgress={setProgress} navigate={go} showToast={showToast} />
+    page = experienceMatch[1] === 'batangas' && experienceById[experienceMatch[2]]
+      ? <ExperiencePage experience={experienceById[experienceMatch[2]]} progress={progress} setProgress={setProgress} navigate={go} showToast={showToast} />
+      : <NotFound navigate={go} />
+  } else if (communityMatch) {
+    const community = communities.find((item) => item.id === communityMatch[1])
+    page = community
+      ? <CommunityJourneyPage community={community} progress={progress} setProgress={setProgress} navigate={go} showToast={showToast} />
+      : <NotFound navigate={go} />
   } else if (questMatch) {
     page = <PlaceQuestPage quest={placeQuestById[questMatch[1]]} progress={progress} setProgress={setProgress} navigate={go} showToast={showToast} />
   } else if (path === '/app/journey') {
@@ -136,7 +144,7 @@ function App() {
   } else if (path === '/app/passport') {
     page = <PassportPage progress={progress} setProgress={setProgress} navigate={go} showToast={showToast} />
   } else if (path === '/app/discover') {
-    page = <DiscoverPage progress={progress} setProgress={setProgress} navigate={go} showToast={showToast} />
+    page = <CommunitySelectionPage progress={progress} setProgress={setProgress} navigate={go} />
   } else {
     page = <LandingPage navigate={go} />
   }
@@ -278,15 +286,10 @@ function AuthPlaceholder({ mode, navigate }) {
   )
 }
 
-function DiscoverPage({ progress, setProgress, navigate, showToast }) {
+function CommunitySelectionPage({ progress, setProgress, navigate }) {
   const activeCommunityId = communities.some((community) => community.id === progress.activeCommunity)
     ? progress.activeCommunity
     : 'batangas'
-  const activeCommunity = communities.find((community) => community.id === activeCommunityId)
-  const communityProgress = progress.communities.batangas
-  const badgeEarned = communityProgress.completed.length >= journey.completionRequired && Boolean(communityProgress.reflection.trim())
-  const [reflection, setReflection] = useState(communityProgress.reflection)
-  const [reflectionError, setReflectionError] = useState('')
   const [communitySearch, setCommunitySearch] = useState('')
   const filteredCommunities = communities.filter((community) => {
     const query = communitySearch.trim().toLowerCase()
@@ -295,25 +298,7 @@ function DiscoverPage({ progress, setProgress, navigate, showToast }) {
 
   function selectCommunity(communityId) {
     setProgress((current) => ({ ...current, activeCommunity: communityId }))
-  }
-
-  function saveReflection() {
-    if (!reflection.trim()) {
-      setReflectionError('Write a short reflection before completing the community journey.')
-      return
-    }
-    setProgress((current) => ({
-      ...current,
-      communities: {
-        ...current.communities,
-        batangas: {
-          ...current.communities.batangas,
-          reflection: reflection.trim(),
-          badgeDate: current.communities.batangas.badgeDate || new Date().toISOString(),
-        },
-      },
-    }))
-    showToast('Certified Batangueño badge earned!')
+    navigate(`/app/discover/${communityId}`)
   }
 
   return (
@@ -365,41 +350,96 @@ function DiscoverPage({ progress, setProgress, navigate, showToast }) {
             )}
           </div>
         </div>
+      </section>
+    </main>
+  )
+}
 
-        {activeCommunityId === 'batangas' ? (
-          <>
-            <div className="community-intro">
-              <div><span className="location-pill dark-pill"><MapPin size={14} /> Batangas City, Philippines</span><p className="kicker dark">Community journey</p><h2>Experience Batangas<br /><em>as a kababayan.</em></h2><p>Move through food, language, livelihood, history, and personal stories. Complete any five, then describe when you felt least like a tourist.</p></div>
-              <div className="community-progress-card"><span className="eyebrow">Community progress</span><strong>{communityProgress.completed.length}<small> / 6</small></strong><div className="progress-track"><span style={{ width: `${communityProgress.completed.length / 6 * 100}%` }} /></div><p>{badgeEarned ? 'Certified Batangueño earned' : `${Math.max(0, journey.completionRequired - communityProgress.completed.length)} more before your reflection`}</p></div>
+function CommunityJourneyPage({ community, progress, setProgress, navigate, showToast }) {
+  const communityProgress = progress.communities.batangas
+  const badgeEarned = communityProgress.completed.length >= journey.completionRequired && Boolean(communityProgress.reflection.trim())
+  const [reflection, setReflection] = useState(communityProgress.reflection)
+  const [reflectionError, setReflectionError] = useState('')
+
+  function saveReflection() {
+    if (!reflection.trim()) {
+      setReflectionError('Write a short reflection before completing the community journey.')
+      return
+    }
+    setProgress((current) => ({
+      ...current,
+      communities: {
+        ...current.communities,
+        batangas: {
+          ...current.communities.batangas,
+          reflection: reflection.trim(),
+          badgeDate: current.communities.batangas.badgeDate || new Date().toISOString(),
+        },
+      },
+    }))
+    showToast('Certified Batangueño badge earned!')
+  }
+
+  return (
+    <main className={`community-journey-page ${community.id === 'batangas' ? 'batangas-journey-page' : ''}`}>
+      <section className="community-header community-journey-header">
+        {community.id === 'batangas' && (
+          <span className="journey-festival-pennants" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /></span>
+        )}
+        <div className={`page-width ${community.id === 'batangas' ? 'sublian-hero-layout' : ''}`}>
+          <div className="sublian-hero-copy">
+            <button className="community-back-link" onClick={() => navigate('/app/discover')}><ArrowLeft size={16} /> All communities</button>
+            <p className="kicker">{community.city} community journey</p>
+            <h1>{community.status === 'coming-soon' ? <>A journey for {community.city} is <em>taking shape.</em></> : <>Enter the rhythm <em>of Batangas.</em></>}</h1>
+            <p>{community.status === 'coming-soon' ? 'Community journeys are only published after their experiences have been researched and locally validated.' : 'Follow a festival route through food, language, livelihood, history, and personal stories. Complete any five stops, then gather your thoughts in the closing circle.'}</p>
+          </div>
+          {community.id === 'batangas' && (
+            <aside className="sublian-festival-seal" aria-label="Sublian-inspired Batangas community route">
+              <span>Batangas City</span>
+              <strong>Sublian</strong>
+              <em>community route</em>
+              <div className="festival-mask-mark" aria-hidden="true"><i /><i /><i /></div>
+              <small>Devotion · rhythm · bayanihan</small>
+            </aside>
+          )}
+        </div>
+      </section>
+
+      {community.status === 'coming-soon' ? (
+        <section className="community-overview page-width">
+          <div className="community-coming-soon">
+            <span className="coming-soon-mark">{community.city.slice(0, 2).toUpperCase()}</span>
+            <div><p className="kicker dark">Journey in development</p><h2>{community.city} is not ready to welcome travelers yet.</h2><p>Return to the community directory to explore Batangas City, the functional MVP journey.</p></div>
+          </div>
+        </section>
+      ) : (
+        <>
+          <section className="community-overview community-task-overview page-width">
+            <div className="sublian-theme-band">
+              <span>Festival route</span>
+              <strong>Six community invitations · choose any five</strong>
+              <i aria-hidden="true" />
             </div>
-
+            <div className="community-intro">
+              <div><span className="location-pill dark-pill"><MapPin size={14} /> Batangas City, Philippines</span><p className="kicker dark">Your procession of experiences</p><h2>Follow the<br /><em>festival route.</em></h2><p>Each stop asks you to join in, listen, taste, or learn. The route is yours—complete the invitations in any order.</p></div>
+              <div className="community-progress-card"><span className="festival-pass-stamp">Sublian<br />route pass</span><span className="eyebrow">Stops completed</span><strong>{communityProgress.completed.length}<small> / 6</small></strong><div className="progress-track"><span style={{ width: `${communityProgress.completed.length / 6 * 100}%` }} /></div><p>{badgeEarned ? 'Certified Batangueño earned' : `${Math.max(0, journey.completionRequired - communityProgress.completed.length)} more before the closing circle`}</p></div>
+            </div>
             <div className="mission-grid">
               {journey.experiences.map((experience, index) => (
                 <ExperienceCard key={experience.id} experience={experience} index={index} done={communityProgress.completed.includes(experience.id)} navigate={navigate} />
               ))}
             </div>
-          </>
-        ) : (
-          <div className="community-coming-soon">
-            <span className="coming-soon-mark">CE</span>
-            <div>
-              <p className="kicker dark">Journey in development</p>
-              <h2>{activeCommunity.city} is not ready to welcome travelers yet.</h2>
-              <p>Its experiences will only be published after the community journey has been researched and validated. Choose Batangas City to explore the current prototype.</p>
-            </div>
-          </div>
-        )}
-      </section>
+          </section>
 
-      {activeCommunityId === 'batangas' && (
-        <section className="community-reflection page-width">
-          <div className="reflection-intro"><p className="kicker dark">Final community requirement</p><h2>When did you feel least like a tourist?</h2><p>What happened in that moment, and what do you understand differently about Batangas now?</p><div className="badge-definition"><BadgeCheck size={20} /><span><strong>Certified Batangueño</strong>A cultural participation badge—not an official credential or claim of residency.</span></div></div>
-          <div className="reflection-form">
-            <textarea rows="8" value={reflection} disabled={communityProgress.completed.length < journey.completionRequired} onChange={(event) => { setReflection(event.target.value); setReflectionError('') }} placeholder={communityProgress.completed.length >= journey.completionRequired ? 'Write your honest reflection. It stays on this device.' : 'Complete five community experiences to unlock this reflection.'} />
-            {reflectionError && <p className="form-error">{reflectionError}</p>}
-            {badgeEarned ? <div className="earned-community"><Sparkles size={18} /><span><strong>{journey.welcome}</strong>Your community badge is now in your Passport.</span><button onClick={() => navigate('/app/passport')}>Open Passport <ArrowRight size={15} /></button></div> : <button className="primary-button" disabled={communityProgress.completed.length < journey.completionRequired} onClick={saveReflection}><Sparkles size={18} /> Complete Batangas journey</button>}
-          </div>
-        </section>
+          <section className="community-reflection page-width">
+            <div className="reflection-intro"><p className="kicker dark">The closing circle</p><h2>When did you feel least like a tourist?</h2><p>After the route, gather what stayed with you. What happened in that moment, and what do you understand differently about Batangas now?</p><div className="badge-definition"><BadgeCheck size={20} /><span><strong>Certified Batangueño</strong>A cultural participation badge—not an official credential or claim of residency.</span></div></div>
+            <div className="reflection-form">
+              <textarea rows="8" value={reflection} disabled={communityProgress.completed.length < journey.completionRequired} onChange={(event) => { setReflection(event.target.value); setReflectionError('') }} placeholder={communityProgress.completed.length >= journey.completionRequired ? 'Write your honest reflection. It stays on this device.' : 'Complete five community experiences to unlock this reflection.'} />
+              {reflectionError && <p className="form-error">{reflectionError}</p>}
+              {badgeEarned ? <div className="earned-community"><Sparkles size={18} /><span><strong>{journey.welcome}</strong>Your community badge is now in your Passport.</span><button onClick={() => navigate('/app/passport')}>Open Passport <ArrowRight size={15} /></button></div> : <button className="primary-button" disabled={communityProgress.completed.length < journey.completionRequired} onClick={saveReflection}><Sparkles size={18} /> Complete Batangas journey</button>}
+            </div>
+          </section>
+        </>
       )}
     </main>
   )
@@ -418,14 +458,14 @@ function CommunityCityCard({ community, active, onSelect }) {
       >
         {community.id === 'batangas' ? (
           <>
-            <img className="batangas-card-photo" src="/images/subli-batangas.jpg" alt="" aria-hidden="true" />
+            <img className="batangas-card-photo" src="/images/sublian-festival-batangas-city-2022.jpg" alt="" aria-hidden="true" />
             <span className="batangas-card-scrim" aria-hidden="true" />
             <span className="festival-pennants" aria-hidden="true"><i /><i /><i /><i /></span>
             <span className="batangas-card-content">
               <span className="batangas-card-topline">
                 <small>Community journey · Philippines</small>
                 <span className={`city-card-status${available ? ' available' : ''}`}>
-                  {active ? <><Check size={15} /> Selected</> : <>Explore <ArrowRight size={15} /></>}
+                  <>Open journey <ArrowRight size={15} /></>
                 </span>
               </span>
               <strong className="batangas-card-title">Batangas <em>City</em></strong>
@@ -451,8 +491,7 @@ function CommunityCityCard({ community, active, onSelect }) {
       </button>
       {community.id === 'batangas' && (
         <span className="city-photo-credit">
-          Photo: <a href="https://commons.wikimedia.org/wiki/File:Subli.jpg" target="_blank" rel="noreferrer">Audioboss</a>
-          {' / '}<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a> · cropped for display
+          Photo: <a href="https://batangascity.gov.ph/web/current-news/4993-pagdiriwang-ng-53rd-batangas-city-foundation-day-matagumpay" target="_blank" rel="noreferrer">Batangas City PIO · 2022 Sublian Parade</a> · cropped for display
         </span>
       )}
     </div>
@@ -463,8 +502,9 @@ function ExperienceCard({ experience, index, done, navigate }) {
   const Icon = experience.icon
   return (
     <article className={`mission-card ${done ? 'done' : ''}`}>
+      <span className="mission-banderitas" aria-hidden="true"><i /><i /><i /><i /><i /></span>
       <div className="mission-topline"><span className={`mission-icon ${experience.color}`}><Icon size={21} /></span><span className="mission-number">{String(index + 1).padStart(2, '0')}</span></div>
-      <div className="mission-type">{experience.category}</div><h3>{experience.title}</h3><p>{experience.summary}</p>
+      <div className="mission-type">Festival stop · {experience.category}</div><h3>{experience.title}</h3><p>{experience.summary}</p>
       {experience.place && <div className="place-tag"><MapPin size={13} /> {experience.place}</div>}
       <div className="mission-footer"><span>{experience.duration}</span><button className={done ? 'complete-button completed' : 'complete-button'} onClick={() => navigate(`/app/discover/batangas/experiences/${experience.id}`)}>{done ? <><Check size={15} /> Completed</> : <>Open <ChevronRight size={15} /></>}</button></div>
     </article>
@@ -497,7 +537,7 @@ function ExperiencePage({ experience, progress, setProgress, navigate, showToast
       },
     }))
     showToast('Community experience completed.')
-    navigate('/app/discover')
+    navigate('/app/discover/batangas')
   }
 
   function undo() {
@@ -509,12 +549,12 @@ function ExperiencePage({ experience, progress, setProgress, navigate, showToast
       },
     }))
     showToast('Experience marked incomplete.')
-    navigate('/app/discover')
+    navigate('/app/discover/batangas')
   }
 
   return (
     <main className="experience-page">
-      <div className="page-width experience-breadcrumb"><button onClick={() => navigate('/app/discover')}><ArrowLeft size={17} /> Back to Batangas</button><span>Discover <ChevronRight size={13} /> {experience.category}</span></div>
+      <div className="page-width experience-breadcrumb"><button onClick={() => navigate('/app/discover/batangas')}><ArrowLeft size={17} /> Back to Batangas</button><span>Discover <ChevronRight size={13} /> {experience.category}</span></div>
       <section className="page-width experience-layout">
         <aside className="experience-aside"><span className={`mission-icon large ${experience.color}`}><Icon size={28} /></span><p className="kicker dark">{experience.category}</p><h1>{experience.title}</h1><p>{experience.summary}</p><div className="experience-meta"><span><Clock3 size={17} /><div><small>Time</small>{experience.duration}</div></span><span><PhilippinePeso size={17} /><div><small>Cost</small>{experience.cost}</div></span>{experience.place && <span><MapPin size={17} /><div><small>Suggested setting</small>{experience.place}</div></span>}</div></aside>
         <article className="experience-content">
@@ -723,7 +763,7 @@ function PassportPage({ progress, setProgress, navigate, showToast }) {
       <div className="passport-sections">
         <section className="passport-community-section">
           <div className="passport-section-heading"><div><span className="eyebrow">Community badges</span><h2>The deeper achievement.</h2></div><span>{badgeEarned ? '1 earned' : 'In progress'}</span></div>
-          {badgeEarned ? <div className="earned-badge-panel"><BadgeVisual earned label="Community journey complete" /><div className="badge-memory"><p className="kicker dark">Your reflection</p><blockquote>{communityProgress.reflection}</blockquote><span>Earned {new Date(communityProgress.badgeDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span><button className="secondary-button" onClick={downloadBadge}><Download size={17} /> Download badge card</button></div></div> : <div className="empty-passport-state"><LockKeyhole size={28} /><div><h3>Your Certified Batangueño badge is taking shape.</h3><p>{communityProgress.completed.length} of 5 required experiences complete.</p></div><button onClick={() => navigate('/app/discover')}>Continue Discover <ArrowRight size={15} /></button></div>}
+          {badgeEarned ? <div className="earned-badge-panel"><BadgeVisual earned label="Community journey complete" /><div className="badge-memory"><p className="kicker dark">Your reflection</p><blockquote>{communityProgress.reflection}</blockquote><span>Earned {new Date(communityProgress.badgeDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span><button className="secondary-button" onClick={downloadBadge}><Download size={17} /> Download badge card</button></div></div> : <div className="empty-passport-state"><LockKeyhole size={28} /><div><h3>Your Certified Batangueño badge is taking shape.</h3><p>{communityProgress.completed.length} of 5 required experiences complete.</p></div><button onClick={() => navigate('/app/discover/batangas')}>Continue Discover <ArrowRight size={15} /></button></div>}
         </section>
 
         <section className="passport-stamps-section">
