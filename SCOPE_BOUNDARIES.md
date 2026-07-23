@@ -7,7 +7,7 @@
 - Guest entry into the application
 - Community-tab architecture with Batangas as the functional MVP community
 - Six Batangas community experiences
-- Five-of-six completion plus typed closing reflection
+- All-six completion plus typed closing reflection
 - Certified Batangueño community badge
 - Two Batangas place quests
 - Private photo attachment or written accessibility alternative

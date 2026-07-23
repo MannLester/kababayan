@@ -23,7 +23,7 @@ Batangas City is the only functional MVP community.
 
 ### Community badge
 
-Complete any five of six Batangas community experiences and submit a typed reflection to earn the **Certified Batangueño** cultural journey badge.
+Complete all six Batangas community experiences and submit a typed reflection to earn the **Certified Batangueño** cultural journey badge.
 
 ### Place stamps
 

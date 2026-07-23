@@ -33,7 +33,7 @@ Discover is organized by community. The MVP contains one functional community, B
 
 The Batangas community badge requires:
 
-- Any five of six community experiences
+- All six community experiences
 - A typed closing reflection
 
 The Certified Batangueño badge is a playful cultural-journey badge. It is not a government credential, proof of residency, or literal certification of identity.

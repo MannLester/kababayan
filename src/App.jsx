@@ -3,13 +3,11 @@ import {
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
-  Camera,
   Check,
   CheckCircle2,
   ChevronRight,
   Clock3,
   Compass,
-  Download,
   Heart,
   Home,
   ImagePlus,
@@ -142,7 +140,7 @@ function App() {
   } else if (path === '/app/journey') {
     page = <JourneyPage progress={progress} navigate={go} />
   } else if (path === '/app/passport') {
-    page = <PassportPage progress={progress} setProgress={setProgress} navigate={go} showToast={showToast} />
+    page = <PassportPage progress={progress} setProgress={setProgress} showToast={showToast} />
   } else if (path === '/app/discover') {
     page = <CommunitySelectionPage progress={progress} setProgress={setProgress} navigate={go} />
   } else {
@@ -260,7 +258,7 @@ function LandingPage({ navigate }) {
       <section className="landing-preview">
         <div className="page-width preview-layout">
           <div className="preview-copy"><p className="kicker">Your first community</p><h2>Begin in Batangas City.</h2><p>Taste lomi, speak with warmth, enter the palengke with curiosity, and listen to what makes locals proud.</p><button className="text-arrow light-arrow" onClick={() => navigate('/signup')}>Preview the experience <ArrowRight size={17} /></button></div>
-          <div className="preview-passport"><div className="badge-emblem"><span>CB</span><small>BATANGAS CITY</small></div><p>Complete five experiences and reflect</p><h3>Certified Batangueño</h3></div>
+          <div className="preview-passport"><div className="badge-emblem"><span>CB</span><small>BATANGAS CITY</small></div><p>Complete every experience and reflect</p><h3>Certified Batangueño</h3></div>
         </div>
       </section>
 
@@ -357,11 +355,16 @@ function CommunitySelectionPage({ progress, setProgress, navigate }) {
 
 function CommunityJourneyPage({ community, progress, setProgress, navigate, showToast }) {
   const communityProgress = progress.communities.batangas
+  const canReflect = communityProgress.completed.length >= journey.completionRequired
   const badgeEarned = communityProgress.completed.length >= journey.completionRequired && Boolean(communityProgress.reflection.trim())
   const [reflection, setReflection] = useState(communityProgress.reflection)
   const [reflectionError, setReflectionError] = useState('')
 
   function saveReflection() {
+    if (!canReflect) {
+      setReflectionError('Complete every community invitation before writing the closing reflection.')
+      return
+    }
     if (!reflection.trim()) {
       setReflectionError('Write a short reflection before completing the community journey.')
       return
@@ -373,11 +376,30 @@ function CommunityJourneyPage({ community, progress, setProgress, navigate, show
         batangas: {
           ...current.communities.batangas,
           reflection: reflection.trim(),
-          badgeDate: current.communities.batangas.badgeDate || new Date().toISOString(),
+          badgeDate: current.communities.batangas.completed.length >= journey.completionRequired
+            ? current.communities.batangas.badgeDate || new Date().toISOString()
+            : current.communities.batangas.badgeDate,
         },
       },
     }))
-    showToast('Certified Batangueño badge earned!')
+    showToast(communityProgress.completed.length >= journey.completionRequired ? 'Certified Batangueño badge earned!' : 'Your reflection was saved.')
+  }
+
+  function toggleExperience(experienceId) {
+    const completed = communityProgress.completed.includes(experienceId)
+    setProgress((current) => ({
+      ...current,
+      communities: {
+        ...current.communities,
+        batangas: {
+          ...current.communities.batangas,
+          completed: completed
+            ? current.communities.batangas.completed.filter((id) => id !== experienceId)
+            : [...current.communities.batangas.completed, experienceId],
+        },
+      },
+    }))
+    showToast(completed ? 'Invitation returned to your list.' : 'Added to your Batangas memories.')
   }
 
   return (
@@ -391,7 +413,7 @@ function CommunityJourneyPage({ community, progress, setProgress, navigate, show
             <button className="community-back-link" onClick={() => navigate('/app/discover')}><ArrowLeft size={16} /> All communities</button>
             <p className="kicker">{community.city} community journey</p>
             <h1>{community.status === 'coming-soon' ? <>A journey for {community.city} is <em>taking shape.</em></> : <>Enter the rhythm <em>of Batangas.</em></>}</h1>
-            <p>{community.status === 'coming-soon' ? 'Community journeys are only published after their experiences have been researched and locally validated.' : 'Follow a festival route through food, language, livelihood, history, and personal stories. Complete any five stops, then gather your thoughts in the closing circle.'}</p>
+            <p>{community.status === 'coming-soon' ? 'Community journeys are only published after their experiences have been researched and locally validated.' : 'Follow a festival route through food, language, livelihood, history, and personal stories. Complete every invitation, then gather your thoughts in the closing circle.'}</p>
           </div>
           {community.id === 'batangas' && (
             <aside className="sublian-festival-seal" aria-label="Sublian-inspired Batangas community route">
@@ -417,16 +439,16 @@ function CommunityJourneyPage({ community, progress, setProgress, navigate, show
           <section className="community-overview community-task-overview page-width">
             <div className="sublian-theme-band">
               <span>Festival route</span>
-              <strong>Six community invitations · choose any five</strong>
+              <strong>Choose what feels natural · skip anything</strong>
               <i aria-hidden="true" />
             </div>
             <div className="community-intro">
-              <div><span className="location-pill dark-pill"><MapPin size={14} /> Batangas City, Philippines</span><p className="kicker dark">Your procession of experiences</p><h2>Follow the<br /><em>festival route.</em></h2><p>Each stop asks you to join in, listen, taste, or learn. The route is yours—complete the invitations in any order.</p></div>
-              <div className="community-progress-card"><span className="festival-pass-stamp">Sublian<br />route pass</span><span className="eyebrow">Stops completed</span><strong>{communityProgress.completed.length}<small> / 6</small></strong><div className="progress-track"><span style={{ width: `${communityProgress.completed.length / 6 * 100}%` }} /></div><p>{badgeEarned ? 'Certified Batangueño earned' : `${Math.max(0, journey.completionRequired - communityProgress.completed.length)} more before the closing circle`}</p></div>
+              <div><span className="location-pill dark-pill"><MapPin size={14} /> Batangas City, Philippines</span><p className="kicker dark">Gentle invitations from the community</p><h2>Follow your<br /><em>own curiosity.</em></h2><p>Browse what Batangas has to share. There is no order and no rush—mark only the moments that become part of your visit.</p></div>
+              <div className="community-progress-card"><span className="festival-pass-stamp">Sublian<br />memory pass</span><span className="eyebrow">Memories marked</span><strong>{communityProgress.completed.length}<small> moments</small></strong><div className="progress-track"><span style={{ width: `${communityProgress.completed.length / 6 * 100}%` }} /></div><p>{badgeEarned ? 'Certified Batangueño earned' : 'Explore only what feels right today.'}</p></div>
             </div>
             <div className="mission-grid">
-              {journey.experiences.map((experience, index) => (
-                <ExperienceCard key={experience.id} experience={experience} index={index} done={communityProgress.completed.includes(experience.id)} navigate={navigate} />
+              {journey.experiences.map((experience) => (
+                <ExperienceListItem key={experience.id} experience={experience} done={communityProgress.completed.includes(experience.id)} onToggle={toggleExperience} navigate={navigate} />
               ))}
             </div>
           </section>
@@ -434,9 +456,9 @@ function CommunityJourneyPage({ community, progress, setProgress, navigate, show
           <section className="community-reflection page-width">
             <div className="reflection-intro"><p className="kicker dark">The closing circle</p><h2>When did you feel least like a tourist?</h2><p>After the route, gather what stayed with you. What happened in that moment, and what do you understand differently about Batangas now?</p><div className="badge-definition"><BadgeCheck size={20} /><span><strong>Certified Batangueño</strong>A cultural participation badge—not an official credential or claim of residency.</span></div></div>
             <div className="reflection-form">
-              <textarea rows="8" value={reflection} disabled={communityProgress.completed.length < journey.completionRequired} onChange={(event) => { setReflection(event.target.value); setReflectionError('') }} placeholder={communityProgress.completed.length >= journey.completionRequired ? 'Write your honest reflection. It stays on this device.' : 'Complete five community experiences to unlock this reflection.'} />
+              <textarea rows="8" value={reflection} disabled={!canReflect} onChange={(event) => { setReflection(event.target.value); setReflectionError('') }} placeholder={canReflect ? 'Write your honest reflection. It stays on this device.' : 'Complete every community invitation to open the closing reflection.'} />
               {reflectionError && <p className="form-error">{reflectionError}</p>}
-              {badgeEarned ? <div className="earned-community"><Sparkles size={18} /><span><strong>{journey.welcome}</strong>Your community badge is now in your Passport.</span><button onClick={() => navigate('/app/passport')}>Open Passport <ArrowRight size={15} /></button></div> : <button className="primary-button" disabled={communityProgress.completed.length < journey.completionRequired} onClick={saveReflection}><Sparkles size={18} /> Complete Batangas journey</button>}
+              {badgeEarned ? <div className="earned-community"><Sparkles size={18} /><span><strong>{journey.welcome}</strong>Your community badge is now in your Passport.</span><button onClick={() => navigate('/app/passport')}>Open Passport <ArrowRight size={15} /></button></div> : <button className="primary-button" disabled={!canReflect} onClick={saveReflection}><Sparkles size={18} /> Formally finish Batangas City</button>}
             </div>
           </section>
         </>
@@ -498,15 +520,19 @@ function CommunityCityCard({ community, active, onSelect }) {
   )
 }
 
-function ExperienceCard({ experience, index, done, navigate }) {
-  const Icon = experience.icon
+function ExperienceListItem({ experience, done, onToggle, navigate }) {
   return (
-    <article className={`mission-card ${done ? 'done' : ''}`}>
-      <span className="mission-banderitas" aria-hidden="true"><i /><i /><i /><i /><i /></span>
-      <div className="mission-topline"><span className={`mission-icon ${experience.color}`}><Icon size={21} /></span><span className="mission-number">{String(index + 1).padStart(2, '0')}</span></div>
-      <div className="mission-type">Festival stop · {experience.category}</div><h3>{experience.title}</h3><p>{experience.summary}</p>
-      {experience.place && <div className="place-tag"><MapPin size={13} /> {experience.place}</div>}
-      <div className="mission-footer"><span>{experience.duration}</span><button className={done ? 'complete-button completed' : 'complete-button'} onClick={() => navigate(`/app/discover/batangas/experiences/${experience.id}`)}>{done ? <><Check size={15} /> Completed</> : <>Open <ChevronRight size={15} /></>}</button></div>
+    <article className={`experience-list-item ${done ? 'done' : ''}`}>
+      <label className="experience-check" aria-label={`${done ? 'Uncheck' : 'Check'} ${experience.title}`}>
+        <input type="checkbox" checked={done} onChange={() => onToggle(experience.id)} />
+        <span aria-hidden="true"><Check size={17} /></span>
+      </label>
+      <button className="experience-list-action" onClick={() => navigate(`/app/discover/batangas/experiences/${experience.id}`)}>
+        <img src={experience.image} alt="" aria-hidden="true" />
+        <span className="experience-list-copy"><strong>{experience.title}</strong><small>{experience.summary}</small></span>
+        <ChevronRight className="experience-list-chevron" size={19} aria-hidden="true" />
+      </button>
+      <span className="experience-complete-stamp" aria-hidden="true"><i className="salakot-mark"><b /></i><small>Salamat</small></span>
     </article>
   )
 }
@@ -576,14 +602,13 @@ function JourneyPage({ progress, navigate }) {
         <div className="page-width"><p className="kicker">Optional place quests</p><h1>Let a location open<br /><em>a deeper story.</em></h1><p>Visit meaningful places, complete a small set of activities, and keep a private photo or observation in your Passport.</p></div>
       </section>
       <section className="page-width place-quest-list">
-        <div className="section-heading"><div><p className="kicker dark">Batangas place quests</p><h2>Side quests with a purpose.</h2><p>These quests are optional and do not affect your Certified Batangueño badge.</p></div><div className="trust-chip"><Camera size={18} /><span><strong>Private photos</strong>Never uploaded</span></div></div>
+        <div className="section-heading"><div><p className="kicker dark">Batangas place quests</p><h2>Side quests with a purpose.</h2><p>These quests are optional and do not affect your Certified Batangueño badge.</p></div></div>
         <div className="place-quest-grid">
           {placeQuests.map((quest) => {
             const completed = progress.placeQuests[quest.id]?.completed
-            return <article className={`place-quest-card ${quest.color}`} key={quest.id}><div className="quest-art"><span>{quest.symbol}</span><div className="landmark-sun" /></div><div className="quest-content"><span className="quest-theme">{quest.theme}</span><h3>{quest.name}</h3><p>{quest.summary}</p><div className="quest-meta"><span><MapPin size={13} /> {quest.location}</span><span><Clock3 size={13} /> {quest.duration}</span></div><button className={completed ? 'quest-completed' : ''} onClick={() => navigate(`/app/journey/${quest.id}`)}>{completed ? <><Stamp size={16} /> Stamp earned</> : <>Open place quest <ArrowRight size={16} /></>}</button></div></article>
+            return <article className={`place-quest-card ${quest.color}`} key={quest.id}><div className="quest-art"><img src={quest.image} alt={quest.imageAlt} /><a className="quest-photo-credit" href={quest.photoCreditUrl} target="_blank" rel="noreferrer">{quest.photoCredit} · {quest.photoLicense}</a></div><div className="quest-content"><span className="quest-theme">{quest.theme}</span><h3>{quest.name}</h3><p>{quest.summary}</p><div className="quest-meta"><span><MapPin size={13} /> {quest.location}</span><span><Clock3 size={13} /> {quest.duration}</span></div><button className={completed ? 'quest-completed' : ''} onClick={() => navigate(`/app/journey/${quest.id}`)}>{completed ? <><Stamp size={16} /> Stamp earned</> : <>Open place quest <ArrowRight size={16} /></>}</button></div></article>
           })}
         </div>
-        <div className="scope-callout"><Compass size={24} /><div><h3>Not a landmark directory.</h3><p>A place appears only when it offers a meaningful cultural, historical, spiritual, livelihood, or environmental activity.</p></div></div>
       </section>
     </main>
   )
@@ -658,7 +683,7 @@ function PlaceQuestPage({ quest, progress, setProgress, navigate, showToast }) {
     <main className="quest-detail-page">
       <div className="page-width experience-breadcrumb"><button onClick={() => navigate('/app/journey')}><ArrowLeft size={17} /> Back to place quests</button><span>Journey <ChevronRight size={13} /> {quest.name}</span></div>
       <section className="page-width quest-detail-layout">
-        <aside className={`quest-detail-aside ${quest.color}`}><div className="quest-symbol">{quest.symbol}</div><p className="kicker">{quest.theme}</p><h1>{quest.name}</h1><p>{quest.context}</p><div className="quest-meta vertical"><span><MapPin size={15} /> {quest.location}</span><span><Clock3 size={15} /> {quest.duration}</span></div></aside>
+        <aside className={`quest-detail-aside ${quest.color}`}><img className="quest-detail-image" src={quest.image} alt="" aria-hidden="true" /><span className="quest-detail-scrim" aria-hidden="true" /><div className="quest-detail-copy"><p className="kicker">{quest.theme}</p><h1>{quest.name}</h1><p>{quest.context}</p><div className="quest-meta vertical"><span><MapPin size={15} /> {quest.location}</span><span><Clock3 size={15} /> {quest.duration}</span></div><a className="quest-detail-credit" href={quest.photoCreditUrl} target="_blank" rel="noreferrer">Photo: {quest.photoCredit} · {quest.photoLicense}</a></div></aside>
         <article className="quest-detail-content">
           <section><span className="section-number">01</span><div><h2>While you are there</h2><ol>{quest.activities.map((activity) => <li key={activity}>{activity}</li>)}</ol></div></section>
           <div className="guidance-card etiquette standalone"><Heart size={19} /><div><h3>Visit with care</h3><p>{quest.etiquette}</p></div></div>
@@ -677,17 +702,18 @@ function PlaceQuestPage({ quest, progress, setProgress, navigate, showToast }) {
   )
 }
 
-function PassportPage({ progress, setProgress, navigate, showToast }) {
+function PassportPage({ progress, setProgress, showToast }) {
   const communityProgress = progress.communities.batangas
   const badgeEarned = communityProgress.completed.length >= journey.completionRequired && Boolean(communityProgress.reflection)
-  const completedQuests = placeQuests.filter((quest) => progress.placeQuests[quest.id]?.completed)
   const [name, setName] = useState(progress.displayName)
   const [photos, setPhotos] = useState({})
+  const [pageIndex, setPageIndex] = useState(0)
+  const [turning, setTurning] = useState(null)
+  const [drag, setDrag] = useState({ active: false, startX: 0, delta: 0 })
 
   useEffect(() => {
-    let urls = []
-    const earnedQuests = placeQuests.filter((quest) => progress.placeQuests[quest.id]?.completed)
-    Promise.all(earnedQuests.map(async (quest) => {
+    const urls = []
+    Promise.all(placeQuests.map(async (quest) => {
       const blob = await getPlacePhoto(quest.id)
       if (!blob) return
       const url = URL.createObjectURL(blob)
@@ -708,77 +734,227 @@ function PassportPage({ progress, setProgress, navigate, showToast }) {
     if (!window.confirm('Reset all Kababayan progress and private photos on this device?')) return
     await clearPlacePhotos(placeQuests.map((quest) => quest.id))
     setProgress(emptyProgress())
+    setPhotos({})
     showToast('Local Passport reset.')
   }
 
-  function downloadBadge() {
-    const canvas = document.createElement('canvas')
-    canvas.width = 1200
-    canvas.height = 630
-    const context = canvas.getContext('2d')
-    context.fillStyle = '#173f35'
-    context.fillRect(0, 0, 1200, 630)
-    context.fillStyle = '#e9a62c'
-    context.beginPath()
-    context.arc(270, 315, 145, 0, Math.PI * 2)
-    context.fill()
-    context.strokeStyle = '#f7d984'
-    context.lineWidth = 10
-    context.stroke()
-    context.fillStyle = '#173f35'
-    context.textAlign = 'center'
-    context.font = 'bold 90px Georgia'
-    context.fillText('CB', 270, 340)
-    context.font = 'bold 17px Arial'
-    context.fillText('BATANGAS CITY', 270, 390)
-    context.textAlign = 'left'
-    context.fillStyle = '#e9a62c'
-    context.font = 'bold 20px Arial'
-    context.fillText('KABABYAN COMMUNITY JOURNEY', 500, 210)
-    context.fillStyle = '#ffffff'
-    context.font = '62px Georgia'
-    context.fillText('Certified Batangueño', 500, 292)
-    context.fillStyle = '#c9d7d2'
-    context.font = '25px Arial'
-    context.fillText('Tasted. Listened. Asked. Supported. Understood.', 500, 350)
-    context.fillStyle = '#ffffff'
-    context.font = 'bold 23px Arial'
-    context.fillText(progress.displayName, 500, 420)
-    const link = document.createElement('a')
-    link.download = 'certified-batangueno.png'
-    link.href = canvas.toDataURL('image/png')
-    link.click()
+  const pages = [
+    {
+      label: 'Identity',
+      content: (
+        <div className="passport-paper-content identity-paper">
+          <PassportPaperHeader title="Kababayan Passport" page="01" />
+          <div className="passport-identity-grid">
+            <div className="passport-portrait">
+              <KababayanMark />
+              <span>Guest portrait</span>
+            </div>
+            <div className="passport-data">
+              <span className="passport-micro-label">Name of holder</span>
+              <div className="passport-name-field">
+                <input aria-label="Passport display name" value={name} onChange={(event) => setName(event.target.value)} />
+                <button onClick={saveName}>Save</button>
+              </div>
+              <div className="passport-data-row">
+                <PassportDatum label="Passport no." value="KBY 000 2026" />
+                <PassportDatum label="Type" value="Visitor" />
+              </div>
+              <div className="passport-data-row">
+                <PassportDatum label="Issued by" value="Kababayan" />
+                <PassportDatum label="Community" value="Batangas City" />
+              </div>
+            </div>
+          </div>
+          <div className="passport-machine-row"><div className="passport-machine-code">KABABAYAN&lt;&lt;GUEST&lt;TRAVELER&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div><button onClick={reset}><RotateCcw size={12} /> Reset</button></div>
+        </div>
+      ),
+    },
+    {
+      label: 'Batangas City',
+      content: (
+        <div className="passport-paper-content community-paper">
+          <PassportPaperHeader title="Batangas City" page="02" />
+          <div className="passport-city-layout">
+            <div className="passport-city-badge-wrap">
+              <CityCertificationBadge
+                community="Batangueño"
+                date={formatPassportDate(communityProgress.badgeDate, 'Awaiting reflection')}
+                earned={badgeEarned}
+              />
+              <span>{badgeEarned ? 'Community journey formally finished' : `${communityProgress.completed.length} of ${journey.completionRequired} invitations complete`}</span>
+            </div>
+            <div className="passport-city-reflection">
+              <span className="passport-micro-label">My reflection</span>
+              <blockquote>{communityProgress.reflection || 'Your closing reflection will live here after every Batangas City invitation is complete.'}</blockquote>
+              <small>{badgeEarned ? 'Recorded in Batangas City' : 'Complete all invitations, then write your reflection to certify this page.'}</small>
+              <div className="passport-entry-marks" aria-label={`${communityProgress.completed.length} of ${journey.completionRequired} invitations complete`}>
+                {journey.experiences.map((experience) => <i className={communityProgress.completed.includes(experience.id) ? 'marked' : ''} key={experience.id} />)}
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    ...placeQuests.map((quest, index) => {
+      const questProgress = progress.placeQuests[quest.id] || {}
+      const completed = Boolean(questProgress.completed)
+      return {
+        label: quest.name,
+        content: (
+          <div className={`passport-paper-content scrapbook-paper ${completed ? 'completed' : ''}`}>
+            <PassportPaperHeader title={quest.name} page={String(index + 3).padStart(2, '0')} />
+            <div className="passport-scrapbook">
+              <figure className="scrapbook-photo scrapbook-place-photo">
+                <span className="scrapbook-tape" aria-hidden="true" />
+                <img src={quest.image} alt={quest.imageAlt} />
+                <figcaption>Batangas City · {quest.name}</figcaption>
+              </figure>
+              <figure className="scrapbook-photo scrapbook-memory-photo">
+                <span className="scrapbook-tape" aria-hidden="true" />
+                {photos[quest.id]
+                  ? <img src={photos[quest.id]} alt={`Traveler memory from ${quest.name}`} />
+                  : <div className="scrapbook-photo-empty"><ImagePlus size={28} /><span>{questProgress.usedAlternative ? 'Written memory' : 'Your photo goes here'}</span></div>}
+                <figcaption>{completed ? 'My memory' : 'Awaiting this journey'}</figcaption>
+              </figure>
+              <div className="scrapbook-caption">
+                <span className="passport-micro-label">Place journey</span>
+                <h2>{quest.name}</h2>
+                <p><MapPin size={13} /> {quest.location}</p>
+                <p><Clock3 size={13} /> {formatPassportDate(questProgress.completedAt, 'Date to be recorded')}</p>
+                {questProgress.usedAlternative && questProgress.observation && <blockquote>{questProgress.observation}</blockquote>}
+              </div>
+              <span className="scrapbook-doodle" aria-hidden="true">✦</span>
+            </div>
+          </div>
+        ),
+      }
+    }),
+  ]
+
+  useEffect(() => {
+    if (!turning) return undefined
+    const timer = window.setTimeout(() => {
+      setPageIndex(turning.target)
+      setTurning(null)
+    }, 760)
+    return () => window.clearTimeout(timer)
+  }, [turning])
+
+  function turnPage(direction) {
+    if (turning) return
+    const target = pageIndex + direction
+    if (target < 0 || target >= pages.length) return
+    setDrag({ active: false, startX: 0, delta: 0 })
+    setTurning({ direction, target })
   }
 
-  return (
-    <main className="passport-page page-width">
-      <section className="passport-heading"><p className="kicker dark">Your cultural Passport</p><h1>Belonging remembered,<br /><em>not scored.</em></h1><p>Community badges, place stamps, photos, and reflections remain private on this device.</p></section>
+  function beginSwipe(event) {
+    if (turning || event.target.closest('button, input, a')) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setDrag({ active: true, startX: event.clientX, delta: 0 })
+  }
 
-      <section className="passport-identity">
-        <div className="identity-mark"><UserRound size={25} /></div>
-        <div><span className="eyebrow">Passport holder</span><div className="name-editor"><input aria-label="Passport display name" value={name} onChange={(event) => setName(event.target.value)} /><button onClick={saveName}>Save</button></div><small>Guest Passport · Local prototype</small></div>
-        <div className="identity-actions"><button onClick={() => navigate('/login')}>Log in</button><button onClick={() => navigate('/signup')}>Sign up</button></div>
-      </section>
+  function continueSwipe(event) {
+    if (!drag.active) return
+    setDrag((current) => ({ ...current, delta: event.clientX - current.startX }))
+  }
 
-      <div className="passport-sections">
-        <section className="passport-community-section">
-          <div className="passport-section-heading"><div><span className="eyebrow">Community badges</span><h2>The deeper achievement.</h2></div><span>{badgeEarned ? '1 earned' : 'In progress'}</span></div>
-          {badgeEarned ? <div className="earned-badge-panel"><BadgeVisual earned label="Community journey complete" /><div className="badge-memory"><p className="kicker dark">Your reflection</p><blockquote>{communityProgress.reflection}</blockquote><span>Earned {new Date(communityProgress.badgeDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span><button className="secondary-button" onClick={downloadBadge}><Download size={17} /> Download badge card</button></div></div> : <div className="empty-passport-state"><LockKeyhole size={28} /><div><h3>Your Certified Batangueño badge is taking shape.</h3><p>{communityProgress.completed.length} of 5 required experiences complete.</p></div><button onClick={() => navigate('/app/discover/batangas')}>Continue Discover <ArrowRight size={15} /></button></div>}
-        </section>
+  function endSwipe(event) {
+    if (!drag.active) return
+    const delta = event.clientX - drag.startX
+    setDrag({ active: false, startX: 0, delta: 0 })
+    if (delta < -55) turnPage(1)
+    else if (delta > 55) turnPage(-1)
+  }
 
-        <section className="passport-stamps-section">
-          <div className="passport-section-heading"><div><span className="eyebrow">Place stamps</span><h2>Optional memories from meaningful places.</h2></div><span>{completedQuests.length} earned</span></div>
-          {completedQuests.length ? <div className="stamp-grid">{completedQuests.map((quest) => { const questProgress = progress.placeQuests[quest.id]; return <article className="stamp-card" key={quest.id}>{photos[quest.id] ? <img src={photos[quest.id]} alt={`Private memory from ${quest.name}`} /> : <div className="stamp-photo-placeholder"><Stamp size={25} /></div>}<div><span className="stamp-symbol">{quest.symbol}</span><small>{quest.theme}</small><h3>{quest.stamp}</h3><p>{questProgress.usedAlternative ? questProgress.observation : questProgress.photoName}</p></div></article> })}</div> : <div className="empty-passport-state compact-empty"><Stamp size={27} /><div><h3>No place stamps yet.</h3><p>Place quests are optional side journeys and do not affect your community badge.</p></div><button onClick={() => navigate('/app/journey')}>Browse place quests <ArrowRight size={15} /></button></div>}
-        </section>
+  function renderSheet(index, className, style) {
+    return (
+      <div className={`passport-sheet ${className}`} style={style} aria-hidden={className.includes('under')} key={`${index}-${className}`}>
+        <div className="passport-paper-face passport-paper-front">{pages[index].content}</div>
+        <div className="passport-paper-face passport-paper-back"><KababayanMark /><span>KABABAYAN</span></div>
       </div>
+    )
+  }
 
-      <section className="passport-privacy"><ShieldCheck size={22} /><div><strong>Stored only in this browser</strong><p>There is no account synchronization, public gallery, GPS verification, or AI photo review.</p></div><button onClick={reset}><RotateCcw size={14} /> Reset local Passport</button></section>
+  const dragRotation = drag.active && drag.delta < 0 && pageIndex < pages.length - 1
+    ? Math.max(-18, drag.delta / 9)
+    : 0
+
+  return (
+    <main className="passport-page">
+      <section className="passport-heading page-width"><p className="kicker dark">Your cultural Passport</p><h1>A journey you can<br /><em>hold onto.</em></h1><p>Swipe through one paper page at a time.</p></section>
+
+      <section className="passport-reader page-width" aria-label="Kababayan Passport">
+        <div className="passport-cover-edge" aria-hidden="true" />
+        <div
+          className={`passport-stage ${drag.active ? 'is-dragging' : ''}`}
+          onPointerDown={beginSwipe}
+          onPointerMove={continueSwipe}
+          onPointerUp={endSwipe}
+          onPointerCancel={() => setDrag({ active: false, startX: 0, delta: 0 })}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowRight') turnPage(1)
+            if (event.key === 'ArrowLeft') turnPage(-1)
+          }}
+          tabIndex="0"
+        >
+          <div className="passport-page-stack passport-stack-three" aria-hidden="true" />
+          <div className="passport-page-stack passport-stack-two" aria-hidden="true" />
+          {turning?.direction === 1 && renderSheet(turning.target, 'passport-sheet-under')}
+          {turning?.direction === -1 && renderSheet(pageIndex, 'passport-sheet-under')}
+          {!turning && pageIndex < pages.length - 1 && renderSheet(pageIndex + 1, 'passport-sheet-under')}
+          {turning?.direction === -1
+            ? renderSheet(turning.target, 'passport-sheet-top is-turning-back')
+            : renderSheet(pageIndex, `passport-sheet-top ${turning ? 'is-turning-forward' : ''}`, { '--drag-rotation': `${dragRotation}deg` })}
+          <div className="passport-page-curl" aria-hidden="true" />
+        </div>
+
+        <div className="passport-reader-controls">
+          <button onClick={() => turnPage(-1)} disabled={pageIndex === 0 || Boolean(turning)} aria-label="Previous Passport page"><ArrowLeft size={18} /></button>
+          <div className="passport-page-indicator">
+            <strong>{pages[pageIndex].label}</strong>
+            <span>{pages.map((page, index) => <button className={index === pageIndex ? 'active' : ''} onClick={() => { if (!turning && index !== pageIndex) setTurning({ direction: index > pageIndex ? 1 : -1, target: index }) }} aria-label={`Open ${page.label} page`} key={page.label} />)}</span>
+            <small>{pageIndex + 1} / {pages.length} · swipe the paper</small>
+          </div>
+          <button onClick={() => turnPage(1)} disabled={pageIndex === pages.length - 1 || Boolean(turning)} aria-label="Next Passport page"><ArrowRight size={18} /></button>
+        </div>
+      </section>
     </main>
   )
 }
 
-function BadgeVisual({ label, earned }) {
-  return <div className={`badge-card ${earned ? 'unlocked' : ''}`}><div className="sun-rays" /><div className="badge-emblem"><span>CB</span><small>BATANGAS CITY</small></div><p>Community journey badge</p><h3>Certified Batangueño</h3><div className="badge-lock"><Sparkles size={14} /> {label}</div></div>
+function PassportPaperHeader({ title, page }) {
+  return <header className="passport-paper-header"><span>Republika ng Pilipinas</span><h2>{title}</h2><small>{page}</small></header>
+}
+
+function PassportDatum({ label, value }) {
+  return <span className="passport-datum"><small>{label}</small><strong>{value}</strong></span>
+}
+
+function CityCertificationBadge({ community, date, earned }) {
+  return (
+    <div className={`city-certification-badge ${earned ? 'earned' : ''}`}>
+      <svg viewBox="0 0 200 200" role="img" aria-label={`${earned ? 'Certified' : 'Incomplete'} ${community} badge`}>
+        <defs>
+          <path id="certified-arc" d="M 32 104 A 68 68 0 0 1 168 104" />
+          <path id="date-arc" d="M 29 112 A 73 73 0 0 0 171 112" />
+          <path id="kababayan-ring" d="M 100 14 A 86 86 0 1 1 99.9 14" />
+        </defs>
+        <circle className="stamp-field" cx="100" cy="100" r="80" />
+        <text className="badge-baybayin-ring"><textPath href="#kababayan-ring" startOffset="0" textLength="540" lengthAdjust="spacingAndGlyphs">ᜃᜊᜊᜌᜈ᜔ ᜃᜊᜊᜌᜈ᜔ ᜃᜊᜊᜌᜈ᜔ ᜃᜊᜊᜌᜈ᜔ ᜃᜊᜊᜌᜈ᜔ ᜃᜊᜊᜌᜈ᜔ ᜃᜊᜊᜌᜈ᜔</textPath></text>
+        <text className="badge-arc-text"><textPath href="#certified-arc" startOffset="50%" textAnchor="middle">CERTIFIED</textPath></text>
+        <text className="badge-community-name" x="100" y="109" textAnchor="middle">{community.toUpperCase()}</text>
+        <text className="badge-date-text"><textPath href="#date-arc" startOffset="50%" textAnchor="middle">{date.toUpperCase()}</textPath></text>
+      </svg>
+    </div>
+  )
+}
+
+function formatPassportDate(value, fallback) {
+  if (!value) return fallback
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return fallback
+  return date.toLocaleDateString('en-PH', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 function HowItWorksPage({ navigate }) {

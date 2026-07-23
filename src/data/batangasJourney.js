@@ -14,12 +14,13 @@ export const journey = {
   badgeName: 'Certified Batangueño',
   duration: '1–2 relaxed days',
   cost: 'Mostly free or low-cost',
-  completionRequired: 5,
+  completionRequired: 6,
   reflectionPrompt: 'Before visiting, what did you think Batangas would be like? What do you understand differently now?',
   welcome: 'Maligayang pagdating, kababayan.',
   experiences: [
     {
       id: 'lomi',
+      image: '/images/batangas-lomi-community.png',
       category: 'Taste',
       color: 'saffron',
       icon: Utensils,
@@ -38,6 +39,7 @@ export const journey = {
     },
     {
       id: 'speak',
+      image: '/images/batangas-community-conversation.jpg',
       category: 'Speak',
       color: 'blue',
       icon: MessageCircleMore,
@@ -59,6 +61,7 @@ export const journey = {
     },
     {
       id: 'palengke',
+      image: '/images/batangas-palengke.jpg',
       category: 'Connect',
       color: 'coral',
       icon: ShoppingBasket,
@@ -76,6 +79,7 @@ export const journey = {
     },
     {
       id: 'museo',
+      image: '/images/sublian-festival-batangas-city-2022.jpg',
       category: 'Understand',
       color: 'green',
       icon: Landmark,
@@ -95,6 +99,7 @@ export const journey = {
     },
     {
       id: 'local',
+      image: '/images/batangas-local-product.jpg',
       category: 'Support',
       color: 'plum',
       icon: Coffee,
@@ -112,6 +117,7 @@ export const journey = {
     },
     {
       id: 'pride',
+      image: '/images/batangas-community-pride.jpg',
       category: 'Reflect',
       color: 'rose',
       icon: HeartHandshake,
@@ -154,7 +160,6 @@ export const journey = {
       story: 'A historic place of worship that remains part of the living spiritual and architectural landscape of the city.',
       invitation: 'Observe quietly and learn why the place continues to matter.',
       art: 'basilica',
-      symbol: 'BI',
     },
   ],
 }
@@ -180,6 +185,11 @@ export const placeQuests = [
     theme: 'Faith, gathering & landscape',
     duration: '45–75 minutes',
     color: 'terracotta',
+    image: '/images/monte-maria-verde-passage.jpg',
+    imageAlt: 'Verde Island Passage viewed from Monte Maria in Barangay Pagkilatan',
+    photoCredit: 'Kampfgruppe · Wikimedia Commons',
+    photoCreditUrl: 'https://commons.wikimedia.org/wiki/File:Verde_Island_Passage.jpg',
+    photoLicense: 'CC BY-SA 3.0',
     summary: 'Notice how pilgrimage, quiet reflection, and the surrounding landscape meet in one place.',
     context: 'Monte Maria is a religious destination in Barangay Pagkilatan. Kababayan treats it as a living place of faith rather than a backdrop to collect.',
     activities: [
@@ -191,7 +201,6 @@ export const placeQuests = [
     photoPrompt: 'Add one respectful photo of the place, landscape, or your own group.',
     alternativePrompt: 'If photography is prohibited or inaccessible, describe one detail you noticed and why it mattered.',
     stamp: 'Monte Maria',
-    symbol: 'MM',
   },
   {
     id: 'basilica',
@@ -201,6 +210,11 @@ export const placeQuests = [
     theme: 'Living faith & heritage',
     duration: '30–60 minutes',
     color: 'blue',
+    image: '/images/batangas-city-basilica.jpg',
+    imageAlt: 'Main façade of the Minor Basilica of the Immaculate Conception in Batangas City',
+    photoCredit: 'LMP 2001 · Wikimedia Commons',
+    photoCreditUrl: 'https://commons.wikimedia.org/wiki/File:Batangas_City_Basilica_2023-04-05.jpg',
+    photoLicense: 'CC BY-SA 4.0',
     summary: 'Look beyond the façade and understand how a historic church remains part of community life.',
     context: 'The Basilica is a historic Batangas City church and an active place of worship. Its significance comes from both its architecture and its continuing role in local religious traditions.',
     activities: [
@@ -212,7 +226,6 @@ export const placeQuests = [
     photoPrompt: 'Add one respectful exterior or permitted architectural photo.',
     alternativePrompt: 'If photography is inappropriate, describe the architectural or community detail you will remember.',
     stamp: 'Basilica',
-    symbol: 'BI',
   },
 ]
 
